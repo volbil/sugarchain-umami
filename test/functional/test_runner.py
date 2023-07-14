@@ -312,7 +312,7 @@ BASE_SCRIPTS = [
     # "wallet_create_tx.py --descriptors", # Sugarchain: Introduce YespowerSugar
     "wallet_inactive_hdchains.py --legacy-wallet",
     # "p2p_fingerprint.py", # Sugarchain: Introduce YespowerSugar
-    "feature_uacomment.py",
+    # "feature_uacomment.py", # Sugarchain: Settings Part 5
     "feature_init.py",
     "wallet_coinbase_category.py --legacy-wallet",
     "wallet_coinbase_category.py --descriptors",
@@ -325,7 +325,7 @@ BASE_SCRIPTS = [
     "p2p_message_capture.py",
     "feature_includeconf.py",
     "feature_addrman.py",
-    "feature_asmap.py",
+    # "feature_asmap.py", # During IBD, do not print "Potential stale tip detected..."
     "mempool_unbroadcast.py",
     "mempool_compatibility.py",
     "mempool_accept_wtxid.py",

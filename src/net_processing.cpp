@@ -2931,6 +2931,8 @@ void PeerManagerImpl::ProcessHeadersMessage(CNode& pfrom, Peer& peer,
     assert(pindexLast);
 
     // Consider fetching more headers if we are not using our headers-sync mechanism.
+    // ToDo: check if we need to implement this
+    // https://github.com/sugarchain-project/yumekawa/commit/4f80c982ebfb0227c09e12179a1e66b82a7be68c#diff-6875de769e90cec84d2e8a9c1b962cdbcda44d870d42e4215827e599e11e90e3R1876
     if (nCount == MAX_HEADERS_RESULTS && !have_headers_sync) {
         // Headers message had its maximum size; the peer may have more headers.
         if (MaybeSendGetHeaders(pfrom, GetLocator(pindexLast), peer)) {
