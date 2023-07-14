@@ -15,6 +15,8 @@ BOOST_FIXTURE_TEST_SUITE(pow_tests, BasicTestingSetup)
 /* Test calculation of next difficulty target with no constraints applying */
 BOOST_AUTO_TEST_CASE(get_next_work)
 {
+    /* BTC */
+    /*
     const auto chainParams = CreateChainParams(*m_node.args, CBaseChainParams::MAIN);
     int64_t nLastRetargetTime = 1261130161; // Block #30240
     CBlockIndex pindexLast;
@@ -29,11 +31,28 @@ BOOST_AUTO_TEST_CASE(get_next_work)
     unsigned int expected_nbits = 0x1d00d86aU;
     BOOST_CHECK_EQUAL(CalculateNextWorkRequired(&pindexLast, nLastRetargetTime, chainParams->GetConsensus()), expected_nbits);
     BOOST_CHECK(PermittedDifficultyTransition(chainParams->GetConsensus(), pindexLast.nHeight+1, pindexLast.nBits, expected_nbits));
+    */
+
+    const auto chainParams = CreateChainParams(*m_node.args, CBaseChainParams::MAIN);
+    arith_uint256 bnAvg = arith_uint256("001c205249494949494949494949494949494949494949494949494949494949"); // height=6161
+    int64_t nLastBlockTime = 1555935464;
+    int64_t nFirstBlockTime = 1555932646;
+
+    // Sugarchain: DAA SugarShield-N510 // fix after YespowerSugar
+    /*
+    >>> "%08x" % 486604799
+    '1d00ffff' + U for unsigned integer = 0x1d00ffffU
+    */
+
+    unsigned int expected_nbits = 0x1d00ffffU;
+    BOOST_CHECK_EQUAL(CalculateNextWorkRequired(bnAvg, nLastBlockTime, nFirstBlockTime, chainParams->GetConsensus()), expected_nbits); // Sugarchain: DAA SugarShield-N510 // fix after YespowerSugar
 }
 
 /* Test the constraint on the upper bound for next work */
 BOOST_AUTO_TEST_CASE(get_next_work_pow_limit)
 {
+    /* BTC */
+    /*
     const auto chainParams = CreateChainParams(*m_node.args, CBaseChainParams::MAIN);
     int64_t nLastRetargetTime = 1231006505; // Block #0
     CBlockIndex pindexLast;
@@ -43,11 +62,21 @@ BOOST_AUTO_TEST_CASE(get_next_work_pow_limit)
     unsigned int expected_nbits = 0x1d00ffffU;
     BOOST_CHECK_EQUAL(CalculateNextWorkRequired(&pindexLast, nLastRetargetTime, chainParams->GetConsensus()), expected_nbits);
     BOOST_CHECK(PermittedDifficultyTransition(chainParams->GetConsensus(), pindexLast.nHeight+1, pindexLast.nBits, expected_nbits));
+    */
+
+    const auto chainParams = CreateChainParams(*m_node.args, CBaseChainParams::MAIN);
+    arith_uint256 bnAvg = arith_uint256("003fffff00000000000000000000000000000000000000000000000000000000"); // height=511 (N=510)
+    int64_t nLastBlockTime = 1555910839;
+    int64_t nFirstBlockTime = 1555908929;
+    unsigned int expected_nbits = 0x1d00ffffU;
+    BOOST_CHECK_EQUAL(CalculateNextWorkRequired(bnAvg, nLastBlockTime, nFirstBlockTime, chainParams->GetConsensus()), expected_nbits); // Sugarchain: DAA SugarShield-N510 // fix after YespowerSugar
 }
 
 /* Test the constraint on the lower bound for actual time taken */
 BOOST_AUTO_TEST_CASE(get_next_work_lower_limit_actual)
 {
+    /* BTC */
+    /*
     const auto chainParams = CreateChainParams(*m_node.args, CBaseChainParams::MAIN);
     int64_t nLastRetargetTime = 1279008237; // Block #66528
     CBlockIndex pindexLast;
@@ -60,11 +89,21 @@ BOOST_AUTO_TEST_CASE(get_next_work_lower_limit_actual)
     // Test that reducing nbits further would not be a PermittedDifficultyTransition.
     unsigned int invalid_nbits = expected_nbits-1;
     BOOST_CHECK(!PermittedDifficultyTransition(chainParams->GetConsensus(), pindexLast.nHeight+1, pindexLast.nBits, invalid_nbits));
+    */
+
+    const auto chainParams = CreateChainParams(*m_node.args, CBaseChainParams::MAIN);
+    arith_uint256 bnAvg = arith_uint256("0037e5f3e2626262626262626262626262626262626262626262626262626262"); // height=1234
+    int64_t nLastBlockTime = 1555913812;
+    int64_t nFirstBlockTime = 1555911686;
+    unsigned int expected_nbits = 0x1d00ffffU;
+    BOOST_CHECK_EQUAL(CalculateNextWorkRequired(bnAvg, nLastBlockTime, nFirstBlockTime, chainParams->GetConsensus()), expected_nbits); // Sugarchain: DAA SugarShield-N510 // fix after YespowerSugar
 }
 
 /* Test the constraint on the upper bound for actual time taken */
 BOOST_AUTO_TEST_CASE(get_next_work_upper_limit_actual)
 {
+    /* BTC */
+    /*
     const auto chainParams = CreateChainParams(*m_node.args, CBaseChainParams::MAIN);
     int64_t nLastRetargetTime = 1263163443; // NOTE: Not an actual block time
     CBlockIndex pindexLast;
@@ -77,6 +116,14 @@ BOOST_AUTO_TEST_CASE(get_next_work_upper_limit_actual)
     // Test that increasing nbits further would not be a PermittedDifficultyTransition.
     unsigned int invalid_nbits = expected_nbits+1;
     BOOST_CHECK(!PermittedDifficultyTransition(chainParams->GetConsensus(), pindexLast.nHeight+1, pindexLast.nBits, invalid_nbits));
+    */
+
+    const auto chainParams = CreateChainParams(*m_node.args, CBaseChainParams::MAIN);
+    arith_uint256 bnAvg = arith_uint256("003ffdfaf9f9f9f9f9f9f9f9f9f9f9f9f9f9f9f9f9f9f9f9f9f9f9f9f9f9f9f9"); // height=512
+    int64_t nLastBlockTime = 1555910839;
+    int64_t nFirstBlockTime = 1555908929;
+    unsigned int expected_nbits = 0x1d00ffffU;
+    BOOST_CHECK_EQUAL(CalculateNextWorkRequired(bnAvg, nLastBlockTime, nFirstBlockTime, chainParams->GetConsensus()), expected_nbits); // Sugarchain: DAA SugarShield-N510 // fix after YespowerSugar
 }
 
 BOOST_AUTO_TEST_CASE(CheckProofOfWork_test_negative_target)

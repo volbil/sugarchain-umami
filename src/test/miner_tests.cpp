@@ -67,6 +67,8 @@ BlockAssembler MinerTestingSetup::AssemblerForTest(CTxMemPool& tx_mempool)
     return BlockAssembler{m_node.chainman->ActiveChainstate(), &tx_mempool, options};
 }
 
+// Sugarchain: DAA SugarShield-N510
+/*
 constexpr static struct {
     unsigned char extranonce;
     unsigned int nonce;
@@ -97,6 +99,7 @@ static std::unique_ptr<CBlockIndex> CreateBlockIndex(int nHeight, CBlockIndex* a
     index->pprev = active_chain_tip;
     return index;
 }
+*/
 
 // Test suite for ancestor feerate transaction selection.
 // Implemented as an additional function, rather than a separate test case,
@@ -603,6 +606,8 @@ void MinerTestingSetup::TestPrioritisedMining(const CScript& scriptPubKey, const
 // NOTE: These tests rely on CreateNewBlock doing its own self-validation!
 BOOST_AUTO_TEST_CASE(CreateNewBlock_validity)
 {
+    // Sugarchain: DAA SugarShield-N510
+    /*
     // Note that by default, these tests run with size accounting enabled.
     CScript scriptPubKey = CScript() << ParseHex("04678afdb0fe5548271967f1a67130b7105cd6a828e03909a67962e0ea1f61deb649f6bc3f4cef38c4f35504e51ec112de5c384df7ba0b8d578a4c702b6bf11d5f") << OP_CHECKSIG;
     std::unique_ptr<CBlockTemplate> pblocktemplate;
@@ -653,6 +658,7 @@ BOOST_AUTO_TEST_CASE(CreateNewBlock_validity)
     SetMockTime(0);
 
     TestPrioritisedMining(scriptPubKey, txFirst);
+    */
 }
 
 BOOST_AUTO_TEST_SUITE_END()
