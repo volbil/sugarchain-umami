@@ -8,11 +8,11 @@
 
     Bitcoin should be started with the command line arguments:
         bitcoind -testnet -daemon \
-                -zmqpubrawtx=tcp://127.0.0.1:28332 \
-                -zmqpubrawblock=tcp://127.0.0.1:28332 \
-                -zmqpubhashtx=tcp://127.0.0.1:28332 \
-                -zmqpubhashblock=tcp://127.0.0.1:28332 \
-                -zmqpubsequence=tcp://127.0.0.1:28332
+                -zmqpubrawtx=tcp://127.0.0.1:44229 \
+                -zmqpubrawblock=tcp://127.0.0.1:44229 \
+                -zmqpubhashtx=tcp://127.0.0.1:44229 \
+                -zmqpubhashblock=tcp://127.0.0.1:44229 \
+                -zmqpubsequence=tcp://127.0.0.1:44229
 
     We use the asyncio library here.  `self.handle()` installs itself as a
     future at the end of the function.  Since it never returns with the event
@@ -34,9 +34,10 @@ if (sys.version_info.major, sys.version_info.minor) < (3, 5):
     print("This example only works with Python 3.5 and greater")
     sys.exit(1)
 
-port = 28332
+port = 44229
 
-class ZMQHandler():
+
+class ZMQHandler:
     def __init__(self):
         self.loop = asyncio.get_event_loop()
         self.zmqContext = zmq.asyncio.Context()
@@ -50,28 +51,32 @@ class ZMQHandler():
         self.zmqSubSocket.setsockopt_string(zmq.SUBSCRIBE, "sequence")
         self.zmqSubSocket.connect("tcp://127.0.0.1:%i" % port)
 
-    async def handle(self) :
+    async def handle(self):
         topic, body, seq = await self.zmqSubSocket.recv_multipart()
         sequence = "Unknown"
         if len(seq) == 4:
-            sequence = str(struct.unpack('<I', seq)[-1])
+            sequence = str(struct.unpack("<I", seq)[-1])
         if topic == b"hashblock":
-            print('- HASH BLOCK ('+sequence+') -')
+            print("- HASH BLOCK (" + sequence + ") -")
             print(body.hex())
         elif topic == b"hashtx":
-            print('- HASH TX  ('+sequence+') -')
+            print("- HASH TX  (" + sequence + ") -")
             print(body.hex())
         elif topic == b"rawblock":
-            print('- RAW BLOCK HEADER ('+sequence+') -')
+            print("- RAW BLOCK HEADER (" + sequence + ") -")
             print(body[:80].hex())
         elif topic == b"rawtx":
-            print('- RAW TX ('+sequence+') -')
+            print("- RAW TX (" + sequence + ") -")
             print(body.hex())
         elif topic == b"sequence":
             hash = body[:32].hex()
             label = chr(body[32])
-            mempool_sequence = None if len(body) != 32+1+8 else struct.unpack("<Q", body[32+1:])[0]
-            print('- SEQUENCE ('+sequence+') -')
+            mempool_sequence = (
+                None
+                if len(body) != 32 + 1 + 8
+                else struct.unpack("<Q", body[32 + 1 :])[0]
+            )
+            print("- SEQUENCE (" + sequence + ") -")
             print(hash, label, mempool_sequence)
         # schedule ourselves to receive the next message
         asyncio.ensure_future(self.handle())
@@ -84,6 +89,7 @@ class ZMQHandler():
     def stop(self):
         self.loop.stop()
         self.zmqContext.destroy()
+
 
 daemon = ZMQHandler()
 daemon.start()
