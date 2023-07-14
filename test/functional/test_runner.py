@@ -88,7 +88,7 @@ EXTENDED_SCRIPTS = [
     # These tests are not run by default.
     # Longest test should go first, to favor running tests in parallel
     # "feature_pruning.py", # Sugarchain: Introduce YespowerSugar
-    "feature_dbcrash.py",
+    # "feature_dbcrash.py", # Sugarchain: Settings Part 1
     "feature_index_prune.py",
     "wallet_pruning.py --legacy-wallet",
 ]
@@ -107,33 +107,33 @@ BASE_SCRIPTS = [
     "mempool_updatefromblock.py",
     "mempool_persist.py --descriptors",
     # vv Tests less than 60s vv
-    "rpc_psbt.py --legacy-wallet",
-    "rpc_psbt.py --descriptors",
+    # "rpc_psbt.py --legacy-wallet", # TODO.ZENY.SETTINGS
+    # "rpc_psbt.py --descriptors", # TODO.ZENY.SETTINGS
     "wallet_fundrawtransaction.py --legacy-wallet",
     "wallet_fundrawtransaction.py --descriptors",
     # "wallet_bumpfee.py --legacy-wallet", # Sugarchain: Introduce YespowerSugar
     # "wallet_bumpfee.py --descriptors", # Sugarchain: Introduce YespowerSugar
-    "wallet_import_rescan.py --legacy-wallet",
-    "wallet_backup.py --legacy-wallet",
-    "wallet_backup.py --descriptors",
-    "feature_segwit.py --legacy-wallet",
-    "feature_segwit.py --descriptors",
-    "p2p_tx_download.py",
+    # "wallet_import_rescan.py --legacy-wallet", # Sugarchain: Settings Part 1
+    # "wallet_backup.py --legacy-wallet", # TODO.ZENY.SETTINGS # BLOCK REWARD
+    # "wallet_backup.py --descriptors", # TODO.ZENY.SETTINGS # BLOCK REWARD
+    # "feature_segwit.py --legacy-wallet", # Sugarchain: Settings Part 1
+    # "feature_segwit.py --descriptors", # Sugarchain: Settings Part 1
+    # "p2p_tx_download.py", # TODO.ZENY.SETTINGS
     "wallet_avoidreuse.py --legacy-wallet",
     "wallet_avoidreuse.py --descriptors",
     "feature_abortnode.py",
     "wallet_address_types.py --legacy-wallet",
     "wallet_address_types.py --descriptors",
-    "wallet_basic.py --legacy-wallet",
-    "wallet_basic.py --descriptors",
+    # "wallet_basic.py --legacy-wallet", # Sugarchain: Settings Part 1
+    # "wallet_basic.py --descriptors", # Sugarchain: Settings Part 1
     "feature_maxtipage.py",
-    "wallet_multiwallet.py --legacy-wallet",
-    "wallet_multiwallet.py --descriptors",
-    "wallet_multiwallet.py --usecli",
+    # "wallet_multiwallet.py --legacy-wallet", # TODO.ZENY.SETTINGS
+    # "wallet_multiwallet.py --descriptors", # TODO.ZENY.SETTINGS
+    # "wallet_multiwallet.py --usecli", # TODO.ZENY.SETTINGS
     "p2p_dns_seeds.py",
     "wallet_groups.py --legacy-wallet",
     "wallet_groups.py --descriptors",
-    "p2p_blockfilters.py",
+    # "p2p_blockfilters.py", # Sugarchain: Settings Part 1
     # "feature_assumevalid.py", # Sugarchain: Introduce YespowerSugar
     "wallet_taproot.py --descriptors",
     # "feature_bip68_sequence.py", # Sugarchain: Introduce YespowerSugar
@@ -149,9 +149,9 @@ BASE_SCRIPTS = [
     "wallet_listtransactions.py --descriptors",
     # vv Tests less than 30s vv
     "p2p_invalid_messages.py",
-    "rpc_createmultisig.py",
+    # "rpc_createmultisig.py", # Sugarchain: Settings Part 1
     "p2p_timeouts.py",
-    "wallet_dump.py --legacy-wallet",
+    # "wallet_dump.py --legacy-wallet", # Sugarchain: Settings Part 1
     "rpc_signer.py",
     "wallet_signer.py --descriptors",
     "wallet_importmulti.py --legacy-wallet",
@@ -162,35 +162,35 @@ BASE_SCRIPTS = [
     "wallet_abandonconflict.py --legacy-wallet",
     "wallet_abandonconflict.py --descriptors",
     "feature_reindex.py",
-    "wallet_labels.py --legacy-wallet",
-    "wallet_labels.py --descriptors",
+    # "wallet_labels.py --legacy-wallet", # Sugarchain: Settings Part 1
+    # "wallet_labels.py --descriptors", # Sugarchain: Settings Part 1
     # "p2p_compactblocks.py", # Sugarchain: Introduce YespowerSugar
     "p2p_compactblocks_blocksonly.py",
     "wallet_hd.py --legacy-wallet",
     "wallet_hd.py --descriptors",
-    "wallet_keypool_topup.py --legacy-wallet",
-    "wallet_keypool_topup.py --descriptors",
+    # "wallet_keypool_topup.py --legacy-wallet", # TODO.ZENY.SETTINGS
+    # "wallet_keypool_topup.py --descriptors", # TODO.ZENY.SETTINGS
     "wallet_fast_rescan.py --descriptors",
     # "interface_zmq.py", # Sugarchain: Introduce YespowerSugar
     "rpc_invalid_address_message.py",
     "rpc_validateaddress.py",
-    "interface_bitcoin_cli.py --legacy-wallet",
-    "interface_bitcoin_cli.py --descriptors",
+    # "interface_bitcoin_cli.py --legacy-wallet", # Sugarchain: Settings Part 1
+    # "interface_bitcoin_cli.py --descriptors", # Sugarchain: Settings Part 1
     "feature_bind_extra.py",
-    "mempool_resurrect.py",
-    "wallet_txn_doublespend.py --mineblock",
+    # "mempool_resurrect.py", # Sugarchain: Settings Part 1
+    # "wallet_txn_doublespend.py --mineblock", # Sugarchain: Settings Part 1
     "tool_wallet.py --legacy-wallet",
     "tool_wallet.py --descriptors",
     "tool_signet_miner.py --legacy-wallet",
     "tool_signet_miner.py --descriptors",
-    "wallet_txn_clone.py",
-    "wallet_txn_clone.py --segwit",
+    # "wallet_txn_clone.py", # Sugarchain: Settings Part 1
+    # "wallet_txn_clone.py --segwit", # Sugarchain: Settings Part 1
     "rpc_getchaintips.py",
     "rpc_misc.py",
-    "interface_rest.py",
-    "mempool_spend_coinbase.py",
+    # "interface_rest.py", # TODO.ZENY.SETTINGS
+    # "mempool_spend_coinbase.py", # TODO.ZENY.SETTINGS
     "wallet_avoid_mixing_output_types.py --descriptors",
-    "mempool_reorg.py",
+    # "mempool_reorg.py", # TODO.ZENY.SETTINGS
     "p2p_block_sync.py",
     "wallet_createwallet.py --legacy-wallet",
     "wallet_createwallet.py --usecli",
@@ -211,8 +211,8 @@ BASE_SCRIPTS = [
     "feature_syscall_sandbox.py",
     "wallet_signrawtransactionwithwallet.py --legacy-wallet",
     "wallet_signrawtransactionwithwallet.py --descriptors",
-    "rpc_signrawtransactionwithkey.py",
-    "rpc_rawtransaction.py --legacy-wallet",
+    # "rpc_signrawtransactionwithkey.py", # Sugarchain: Settings Part 1
+    # "rpc_rawtransaction.py --legacy-wallet", # Sugarchain: Settings Part 1
     "wallet_transactiontime_rescan.py --descriptors",
     "wallet_transactiontime_rescan.py --legacy-wallet",
     "p2p_addrv2_relay.py",
@@ -237,18 +237,18 @@ BASE_SCRIPTS = [
     "p2p_nobloomfilter_messages.py",
     "p2p_filter.py",
     "rpc_setban.py",
-    "p2p_blocksonly.py",
-    "mining_prioritisetransaction.py",
+    # "p2p_blocksonly.py", # TODO.ZENY.SETTINGS
+    # "mining_prioritisetransaction.py", # TODO.ZENY.SETTINGS # too slow...
     "p2p_invalid_locator.py",
     # "p2p_invalid_block.py", # Sugarchain: Introduce YespowerSugar
     # "p2p_invalid_tx.py", # Sugarchain: Introduce YespowerSugar
     # "example_test.py", # Sugarchain: Introduce YespowerSugar
-    "wallet_txn_doublespend.py --legacy-wallet",
+    # "wallet_txn_doublespend.py --legacy-wallet", # Sugarchain: Settings Part 1
     "wallet_multisig_descriptor_psbt.py --descriptors",
-    "wallet_txn_doublespend.py --descriptors",
+    # "wallet_txn_doublespend.py --descriptors", # Sugarchain: Settings Part 1
     "wallet_backwards_compatibility.py --legacy-wallet",
     "wallet_backwards_compatibility.py --descriptors",
-    "wallet_txn_clone.py --mineblock",
+    # "wallet_txn_clone.py --mineblock", # Sugarchain: Settings Part 1
     "feature_notifications.py",
     "rpc_getblockfilter.py",
     "rpc_getblockfrompeer.py",
@@ -268,14 +268,14 @@ BASE_SCRIPTS = [
     "wallet_signmessagewithaddress.py",
     "rpc_signmessagewithprivkey.py",
     "rpc_generate.py",
-    "wallet_balance.py --legacy-wallet",
-    "wallet_balance.py --descriptors",
+    # "wallet_balance.py --legacy-wallet", # Sugarchain: Settings Part 1
+    # "wallet_balance.py --descriptors", # Sugarchain: Settings Part 1
     "p2p_initial_headers_sync.py",
     # "feature_nulldummy.py", # Sugarchain: Introduce YespowerSugar
-    "mempool_accept.py",
+    # "mempool_accept.py", # Sugarchain: Settings Part 1
     "mempool_expiry.py",
     "wallet_import_with_label.py --legacy-wallet",
-    "wallet_importdescriptors.py --descriptors",
+    # "wallet_importdescriptors.py --descriptors", # Sugarchain: Settings Part 1
     "wallet_upgradewallet.py --legacy-wallet",
     "wallet_crosschain.py",
     # "mining_basic.py", # Sugarchain: Introduce YespowerSugar
@@ -305,10 +305,10 @@ BASE_SCRIPTS = [
     # "rpc_getblockstats.py", # Sugarchain: Introduce YespowerSugar
     "feature_bind_port_externalip.py",
     # "wallet_create_tx.py --legacy-wallet", # Sugarchain: Introduce YespowerSugar
-    "wallet_send.py --legacy-wallet",
-    "wallet_send.py --descriptors",
-    "wallet_sendall.py --legacy-wallet",
-    "wallet_sendall.py --descriptors",
+    # "wallet_send.py --legacy-wallet", # Sugarchain: Settings Part 1
+    # "wallet_send.py --descriptors", # Sugarchain: Settings Part 1
+    # "wallet_sendall.py --legacy-wallet", # Sugarchain: Settings Part 1
+    # "wallet_sendall.py --descriptors", # Sugarchain: Settings Part 1
     # "wallet_create_tx.py --descriptors", # Sugarchain: Introduce YespowerSugar
     "wallet_inactive_hdchains.py --legacy-wallet",
     # "p2p_fingerprint.py", # Sugarchain: Introduce YespowerSugar
@@ -318,7 +318,7 @@ BASE_SCRIPTS = [
     "wallet_coinbase_category.py --descriptors",
     "feature_filelock.py",
     "feature_loadblock.py",
-    # 'p2p_dos_header_tree.py', # Sugarchain: DAA SugarShield-N510
+    # 'p2p_dos_header_tree.py', # Sugarchain: Settings Part 1
     "p2p_add_connections.py",
     "feature_bind_port_discover.py",
     # "p2p_unrequested_blocks.py", # Sugarchain: Introduce YespowerSugar

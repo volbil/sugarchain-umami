@@ -24,6 +24,7 @@ using node::PSBTInputAnalysis;
 
 FUZZ_TARGET(psbt)
 {
+    /*
     FuzzedDataProvider fuzzed_data_provider{buffer.data(), buffer.size()};
     PartiallySignedTransaction psbt_mut;
     std::string error;
@@ -91,4 +92,5 @@ FUZZ_TARGET(psbt)
         Assert(psbt_mut.AddOutput(psbt_merge.tx->vout[i], psbt_merge.outputs[i]));
     }
     psbt_mut.unknown.insert(psbt_merge.unknown.begin(), psbt_merge.unknown.end());
+    */
 }

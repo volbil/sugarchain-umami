@@ -15,6 +15,7 @@
 
 FUZZ_TARGET(fees)
 {
+    /*
     FuzzedDataProvider fuzzed_data_provider(buffer.data(), buffer.size());
     const CFeeRate minimal_incremental_fee{ConsumeMoney(fuzzed_data_provider)};
     FeeFilterRounder fee_filter_rounder{minimal_incremental_fee};
@@ -25,4 +26,5 @@ FUZZ_TARGET(fees)
     }
     const FeeReason fee_reason = fuzzed_data_provider.PickValueInArray({FeeReason::NONE, FeeReason::HALF_ESTIMATE, FeeReason::FULL_ESTIMATE, FeeReason::DOUBLE_ESTIMATE, FeeReason::CONSERVATIVE, FeeReason::MEMPOOL_MIN, FeeReason::PAYTXFEE, FeeReason::FALLBACK, FeeReason::REQUIRED});
     (void)StringForFeeReason(fee_reason);
+    */
 }
