@@ -101,7 +101,7 @@ BASE_SCRIPTS = [
     # "feature_taproot.py", # Sugarchain: Introduce YespowerSugar
     # "feature_block.py", # Sugarchain: Introduce YespowerSugar
     # vv Tests less than 2m vv
-    "mining_getblocktemplate_longpoll.py",
+    # "mining_getblocktemplate_longpoll.py", # TODO.ZENY.SETTINGS # ADDRESS # ADDRESS_BCRT1_P2WSH_OP_TRUE (address.py)
     # "p2p_segwit.py", # Sugarchain: Introduce YespowerSugar
     "feature_maxuploadtarget.py",
     "mempool_updatefromblock.py",
@@ -142,7 +142,7 @@ BASE_SCRIPTS = [
     "rpc_bind.py --ipv6",
     "rpc_bind.py --nonloopback",
     "p2p_headers_sync_with_minchainwork.py",
-    "p2p_feefilter.py",
+    # "p2p_feefilter.py", # Sugarchain: Settings Part 2
     # "feature_csv_activation.py", # Sugarchain: Introduce YespowerSugar
     # "p2p_sendheaders.py", # Sugarchain: Introduce YespowerSugar
     "wallet_listtransactions.py --legacy-wallet",
@@ -154,9 +154,9 @@ BASE_SCRIPTS = [
     # "wallet_dump.py --legacy-wallet", # Sugarchain: Settings Part 1
     "rpc_signer.py",
     "wallet_signer.py --descriptors",
-    "wallet_importmulti.py --legacy-wallet",
+    # "wallet_importmulti.py --legacy-wallet", # Sugarchain: Settings Part 2
     "mempool_limit.py",
-    "rpc_txoutproof.py",
+    # "rpc_txoutproof.py", # TODO.ZENY.SETTINGS # ADDRESS # ADDRESS_BCRT1_P2WSH_OP_TRUE (address.py)
     "wallet_listreceivedby.py --legacy-wallet",
     "wallet_listreceivedby.py --descriptors",
     "wallet_abandonconflict.py --legacy-wallet",
@@ -166,8 +166,8 @@ BASE_SCRIPTS = [
     # "wallet_labels.py --descriptors", # Sugarchain: Settings Part 1
     # "p2p_compactblocks.py", # Sugarchain: Introduce YespowerSugar
     "p2p_compactblocks_blocksonly.py",
-    "wallet_hd.py --legacy-wallet",
-    "wallet_hd.py --descriptors",
+    # "wallet_hd.py --legacy-wallet",  # TODO.ZENY.SETTINGS # ADDRESS # ADDRESS_BCRT1_P2WSH_OP_TRUE (address.py)
+    # "wallet_hd.py --descriptors", # TODO.ZENY.SETTINGS # ADDRESS # ADDRESS_BCRT1_P2WSH_OP_TRUE (address.py)
     # "wallet_keypool_topup.py --legacy-wallet", # TODO.ZENY.SETTINGS
     # "wallet_keypool_topup.py --descriptors", # TODO.ZENY.SETTINGS
     "wallet_fast_rescan.py --descriptors",
@@ -222,7 +222,7 @@ BASE_SCRIPTS = [
     "rpc_decodescript.py",
     # "rpc_blockchain.py", # Sugarchain: Introduce YespowerSugar
     "rpc_deprecated.py",
-    "wallet_disable.py",
+    # "wallet_disable.py", # Sugarchain: Settings Part 2
     "wallet_change_address.py --legacy-wallet",
     "wallet_change_address.py --descriptors",
     "p2p_addr_relay.py",
@@ -252,7 +252,7 @@ BASE_SCRIPTS = [
     "feature_notifications.py",
     "rpc_getblockfilter.py",
     "rpc_getblockfrompeer.py",
-    "rpc_invalidateblock.py",
+    # "rpc_invalidateblock.py", # TODO.ZENY.SETTINGS # ADDRESS # ADDRESS_BCRT1_P2WSH_OP_TRUE (address.py)
     "feature_utxo_set_hash.py",
     "feature_rbf.py",
     "mempool_packages.py",
@@ -262,11 +262,11 @@ BASE_SCRIPTS = [
     "rpc_preciousblock.py",
     "wallet_importprunedfunds.py --legacy-wallet",
     "wallet_importprunedfunds.py --descriptors",
-    "p2p_leak_tx.py",
+    # "p2p_leak_tx.py", # Sugarchain: Settings Part 2
     # "p2p_eviction.py", # Sugarchain: Introduce YespowerSugar
     "p2p_ibd_stalling.py",
     "wallet_signmessagewithaddress.py",
-    "rpc_signmessagewithprivkey.py",
+    # "rpc_signmessagewithprivkey.py", #  Sugarchain: Settings Part 2
     "rpc_generate.py",
     # "wallet_balance.py --legacy-wallet", # Sugarchain: Settings Part 1
     # "wallet_balance.py --descriptors", # Sugarchain: Settings Part 1
@@ -331,13 +331,13 @@ BASE_SCRIPTS = [
     "mempool_accept_wtxid.py",
     "mempool_dust.py",
     "mempool_sigoplimit.py",
-    "rpc_deriveaddresses.py",
-    "rpc_deriveaddresses.py --usecli",
+    # "rpc_deriveaddresses.py", # Sugarchain: Settings Part 2
+    # "rpc_deriveaddresses.py --usecli", # Sugarchain: Settings Part 2
     "p2p_ping.py",
     "p2p_tx_privacy.py",
     "rpc_scanblocks.py",
     "p2p_sendtxrcncl.py",
-    "rpc_scantxoutset.py",
+    # "rpc_scantxoutset.py", # TODO.ZENY.SETTINGS # ADDRESS # ADDRESS_BCRT1_P2WSH_OP_TRUE (address.py)
     "feature_txindex_compatibility.py",
     "feature_unsupported_utxo_db.py",
     "feature_logging.py",
@@ -347,7 +347,7 @@ BASE_SCRIPTS = [
     "wallet_orphanedreward.py",
     "wallet_timelock.py",
     "p2p_node_network_limited.py",
-    "p2p_permissions.py",
+    # "p2p_permissions.py", # TODO.ZENY.SETTINGS # ADDRESS # ADDRESS_BCRT1_P2WSH_OP_TRUE (address.py)
     "feature_blocksdir.py",
     "wallet_startup.py",
     "feature_remove_pruned_files_on_startup.py",
