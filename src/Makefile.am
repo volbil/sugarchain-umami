@@ -274,6 +274,8 @@ BITCOIN_CORE_H = \
   txorphanage.h \
   txrequest.h \
   undo.h \
+  unorderd_lru_cache.h \
+  flat-database.h \
   util/asmap.h \
   util/bip32.h \
   util/bitdeque.h \
