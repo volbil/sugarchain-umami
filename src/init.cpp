@@ -84,6 +84,8 @@
 #include <validationinterface.h>
 #include <walletinitinterface.h>
 
+#include <flat-database.h>
+
 #include <algorithm>
 #include <condition_variable>
 #include <cstdint>
@@ -291,6 +293,17 @@ void Shutdown(NodeContext& node)
     // After there are no more peers/RPC left to give us new data which may generate
     // CValidationInterface callbacks, flush them...
     GetMainSignals().FlushBackgroundCallbacks();
+
+    // fRPCInWarmup should be `false` if we completed the loading sequence
+    // before a shutdown request was received
+    std::string statusmessage;
+    bool fRPCInWarmup = RPCIsInWarmup(&statusmessage);
+
+    if (!fRPCInWarmup) {
+        // STORE DATA CACHES INTO SERIALIZED DAT FILES
+        // CFlatDB<CPowCache> flatdb_cache("powcache.dat", "powCache");
+        // flatdb_cache.Dump(CPowCache::Instance());
+    }
 
     // Stop and delete all indexes only after flushing background callbacks.
     if (g_txindex) {
@@ -1540,6 +1553,24 @@ bool AppInitMain(NodeContext& node, interfaces::BlockAndHeaderTipInfo* tip_info)
                 return InitError(error);
             }
         }
+    }
+
+    // ********************************************************* Step 8a: load powcache.dat
+
+    {
+        fs::path pathDB = args.GetDataDirNet();
+
+        // Always load the powcache if available:
+        uiInterface.InitMessage("Loading POW cache...");
+        fs::path powCacheFile = pathDB / "powcache.dat";
+        if (!fs::exists(powCacheFile)) {
+            uiInterface.InitMessage("Loading POW cache for the first time. This could take a minute...");
+        }
+
+        // CFlatDB<CPowCache> flatdb7("powcache.dat", "powCache");
+        // if(!flatdb7.Load(CPowCache::Instance())) {
+        //     return InitError("Failed to load POW cache from file");
+        // }
     }
 
     // As LoadBlockIndex can take several minutes, it's possible the user

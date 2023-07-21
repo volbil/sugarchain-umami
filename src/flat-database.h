@@ -6,7 +6,7 @@
 #define BITCOIN_FLAT_DATABASE_H
 
 #include <clientversion.h>
-#include <fs.h>
+#include <util/fs.h>
 #include <hash.h>
 #include <streams.h>
 #include <util/system.h>
@@ -50,10 +50,10 @@ private:
         ssObj << hash;
 
         // open output file, and associate with CAutoFile
-        FILE *file = fopen(pathDB.string().c_str(), "wb");
+        FILE *file = fsbridge::fopen(pathDB, "wb");
         CAutoFile fileout(file, SER_DISK, CLIENT_VERSION);
         if (fileout.IsNull())
-            return error("%s: Failed to open file %s", __func__, pathDB.string());
+            return error("%s: Failed to open file %s", __func__, fs::PathToString(pathDB));
 
         // Write and commit header, data
         try {
@@ -76,11 +76,11 @@ private:
 
         int64_t nStart = GetTimeMillis();
         // open input file, and associate with CAutoFile
-        FILE *file = fopen(pathDB.string().c_str(), "rb");
+        FILE *file = fsbridge::fopen(pathDB, "rb");
         CAutoFile filein(file, SER_DISK, CLIENT_VERSION);
         if (filein.IsNull())
         {
-            error("%s: Failed to open file %s", __func__, pathDB.string());
+            error("%s: Failed to open file %s", __func__, fs::PathToString(pathDB));
             return FileError;
         }
 
@@ -96,7 +96,7 @@ private:
 
         // read data and checksum from file
         try {
-            filein.read((char *)vchData.data(), dataSize);
+            filein.read((char *)vchData.data());
             filein >> hashIn;
         }
         catch (std::exception &e) {
@@ -105,57 +105,57 @@ private:
         }
         filein.fclose();
 
-        CDataStream ssObj(vchData, SER_DISK, CLIENT_VERSION);
+        // CDataStream ssObj(vchData, SER_DISK, CLIENT_VERSION);
 
         // verify stored checksum matches input data
-        uint256 hashTmp = Hash(ssObj.begin(), ssObj.end());
-        if (hashIn != hashTmp)
-        {
-            error("%s: Checksum mismatch, data corrupted", __func__);
-            return IncorrectHash;
-        }
+        // uint256 hashTmp = Hash(ssObj.begin(), ssObj.end());
+        // if (hashIn != hashTmp)
+        // {
+        //     error("%s: Checksum mismatch, data corrupted", __func__);
+        //     return IncorrectHash;
+        // }
 
 
-        unsigned char pchMsgTmp[4];
-        std::string strMagicMessageTmp;
-        try {
-            // de-serialize file header (file specific magic message) and ..
-            ssObj >> strMagicMessageTmp;
+        // unsigned char pchMsgTmp[4];
+        // std::string strMagicMessageTmp;
+        // try {
+        //     // de-serialize file header (file specific magic message) and ..
+        //     ssObj >> strMagicMessageTmp;
 
-            // ... verify the message matches predefined one
-            if (strMagicMessage != strMagicMessageTmp)
-            {
-                error("%s: Invalid magic message", __func__);
-                return IncorrectMagicMessage;
-            }
+        //     // ... verify the message matches predefined one
+        //     if (strMagicMessage != strMagicMessageTmp)
+        //     {
+        //         error("%s: Invalid magic message", __func__);
+        //         return IncorrectMagicMessage;
+        //     }
 
 
-            // de-serialize file header (network specific magic number) and ..
-            ssObj >> pchMsgTmp;
+        //     // de-serialize file header (network specific magic number) and ..
+        //     ssObj >> pchMsgTmp;
 
-            // ... verify the network matches ours
-            if (memcmp(pchMsgTmp, Params().MessageStart(), sizeof(pchMsgTmp)))
-            {
-                error("%s: Invalid network magic number", __func__);
-                return IncorrectMagicNumber;
-            }
+        //     // ... verify the network matches ours
+        //     if (memcmp(pchMsgTmp, Params().MessageStart(), sizeof(pchMsgTmp)))
+        //     {
+        //         error("%s: Invalid network magic number", __func__);
+        //         return IncorrectMagicNumber;
+        //     }
 
-            // de-serialize data into T object
-            ssObj >> objToLoad;
-        }
-        catch (std::exception &e) {
-            objToLoad.Clear();
-            error("%s: Deserialize or I/O error - %s", __func__, e.what());
-            return IncorrectFormat;
-        }
+        //     // de-serialize data into T object
+        //     ssObj >> objToLoad;
+        // }
+        // catch (std::exception &e) {
+        //     objToLoad.Clear();
+        //     error("%s: Deserialize or I/O error - %s", __func__, e.what());
+        //     return IncorrectFormat;
+        // }
 
-        LogPrintf("Loaded info from %s  %dms\n", strFilename, GetTimeMillis() - nStart);
-        LogPrintf("     %s\n", objToLoad.ToString());
-        if(!fDryRun) {
-            LogPrintf("%s: Cleaning....\n", __func__);
-            objToLoad.CheckAndRemove();
-            LogPrintf("     %s\n", objToLoad.ToString());
-        }
+        // LogPrintf("Loaded info from %s  %dms\n", strFilename, GetTimeMillis() - nStart);
+        // LogPrintf("     %s\n", objToLoad.ToString());
+        // if(!fDryRun) {
+        //     LogPrintf("%s: Cleaning....\n", __func__);
+        //     objToLoad.CheckAndRemove();
+        //     LogPrintf("     %s\n", objToLoad.ToString());
+        // }
 
         return Ok;
     }
@@ -164,7 +164,8 @@ private:
 public:
     CFlatDB(std::string strFilenameIn, std::string strMagicMessageIn)
     {
-        pathDB = GetDataDir() / strFilenameIn;
+        // pathDB = GetDataDir() / strFilenameIn;
+        pathDB = gArgs.GetDataDirNet() / fs::u8path(strFilenameIn);
         strFilename = strFilenameIn;
         strMagicMessage = strMagicMessageIn;
     }
