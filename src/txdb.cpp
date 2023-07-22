@@ -31,6 +31,11 @@ static constexpr uint8_t DB_ADDRESSUNSPENTINDEX{'u'};
 static constexpr uint8_t DB_TIMESTAMPINDEX{'s'};
 static constexpr uint8_t DB_SPENTINDEX{'p'};
 
+// static const char DB_ADDRESSINDEX = 'a';
+// static const char DB_ADDRESSUNSPENTINDEX = 'u';
+// static const char DB_TIMESTAMPINDEX = 's';
+// static const char DB_SPENTINDEX = 'p';
+
 // Keys used in previous version that might still be found in the DB:
 static constexpr uint8_t DB_COINS{'c'};
 static constexpr uint8_t DB_TXINDEX_BLOCK{'T'};
@@ -322,7 +327,7 @@ bool CBlockTreeDB::ReadAddressUnspentIndex(uint160 addressHash, int type,
     pcursor->Seek(std::make_pair(DB_ADDRESSUNSPENTINDEX, CAddressIndexIteratorKey(type, addressHash)));
 
     while (pcursor->Valid()) {
-        std::pair<char,CAddressUnspentKey> key;
+        std::pair<uint8_t,CAddressUnspentKey> key;
         if (pcursor->GetKey(key) && key.first == DB_ADDRESSUNSPENTINDEX && key.second.hashBytes == addressHash) {
             CAddressUnspentValue nValue;
             if (pcursor->GetValue(nValue)) {
@@ -366,7 +371,7 @@ bool CBlockTreeDB::ReadAddressIndex(uint160 addressHash, int type,
     }
 
     while (pcursor->Valid()) {
-        std::pair<char,CAddressIndexKey> key;
+        std::pair<uint8_t,CAddressIndexKey> key;
         if (pcursor->GetKey(key) && key.first == DB_ADDRESSINDEX && key.second.hashBytes == addressHash) {
             if (end > 0 && key.second.blockHeight > end) {
                 break;
@@ -399,7 +404,7 @@ bool CBlockTreeDB::ReadTimestampIndex(const unsigned int &high, const unsigned i
     pcursor->Seek(std::make_pair(DB_TIMESTAMPINDEX, CTimestampIndexIteratorKey(low)));
 
     while (pcursor->Valid()) {
-        std::pair<char, CTimestampIndexKey> key;
+        std::pair<uint8_t, CTimestampIndexKey> key;
         if (pcursor->GetKey(key) && key.first == DB_TIMESTAMPINDEX && key.second.timestamp <= high) {
             hashes.push_back(key.second.blockHash);
             pcursor->Next();
