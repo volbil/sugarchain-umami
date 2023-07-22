@@ -61,6 +61,10 @@ namespace Consensus {
 struct Params;
 } // namespace Consensus
 
+static const bool DEFAULT_ADDRESSINDEX{false};
+static const bool DEFAULT_TIMESTAMPINDEX{false};
+static const bool DEFAULT_SPENTINDEX{false};
+
 /** Maximum number of dedicated script-checking threads allowed */
 static const int MAX_SCRIPTCHECK_THREADS = 15;
 /** -par default (number of script-checking threads, 0 = auto) */
