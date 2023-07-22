@@ -83,6 +83,10 @@ using node::SnapshotMetadata;
 using node::UndoReadFromDisk;
 using node::UnlinkPrunedFiles;
 
+bool fAddressIndex = false;
+bool fTimestampIndex = false;
+bool fSpentIndex = false;
+
 /** Maximum kilobytes for transactions to store for processing during reorg */
 static const unsigned int MAX_DISCONNECTED_TX_POOL_SIZE = 20000;
 /** Time to wait between writing blocks/block index to disk. */
@@ -1095,6 +1099,16 @@ bool MemPoolAccept::Finalize(const ATMPArgs& args, Workspace& ws)
     // - it's not part of a package. Since package relay is not currently supported, this
     // transaction has not necessarily been accepted to miners' mempools.
     bool validForFeeEstimation = !bypass_limits && !args.m_package_submission && IsCurrentForFeeEstimation(m_active_chainstate) && m_pool.HasNoInputsOf(tx);
+
+    // Add memory address index
+    if (fAddressIndex) {
+        m_pool.addAddressIndex(*entry, m_view);
+    }
+
+    // Add memory spent index
+    if (fSpentIndex) {
+        m_pool.addSpentIndex(*entry, m_view);
+    }
 
     // Store transaction in memory
     m_pool.addUnchecked(*entry, ws.m_ancestors, validForFeeEstimation);

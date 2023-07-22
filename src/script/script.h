@@ -530,6 +530,10 @@ public:
      */
     unsigned int GetSigOpCount(const CScript& scriptSig) const;
 
+    /** Used for obsolete pay-to-pubkey addresses indexing. */
+    bool IsPayToPublicKey() const;
+
+    bool IsPayToPublicKeyHash() const;
     bool IsPayToScriptHash() const;
     bool IsPayToWitnessScriptHash() const;
     bool IsWitnessProgram(int& version, std::vector<unsigned char>& program) const;
