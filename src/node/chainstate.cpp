@@ -233,6 +233,18 @@ ChainstateLoadResult LoadChainstate(ChainstateManager& chainman, const CacheSize
            "Restart to resume normal initial block download, or try loading a different snapshot.")};
     }
 
+    if (fAddressIndex != options.addressindex) {
+        return {ChainstateLoadStatus::FAILURE, _("Bad -addressindex flag")};
+    }
+
+    if (fTimestampIndex != options.timestampindex) {
+        return {ChainstateLoadStatus::FAILURE, _("Bad -timestampindex flag")};
+    }
+
+    if (fSpentIndex != options.spentindex) {
+        return {ChainstateLoadStatus::FAILURE, _("Bad -spentindex flag")};
+    }
+
     return {ChainstateLoadStatus::SUCCESS, {}};
 }
 

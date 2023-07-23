@@ -1510,6 +1510,10 @@ bool AppInitMain(NodeContext& node, interfaces::BlockAndHeaderTipInfo* tip_info)
                 "", CClientUIInterface::MSG_ERROR);
         };
 
+        options.addressindex = args.GetBoolArg("-addressindex", DEFAULT_ADDRESSINDEX);
+        options.spentindex = args.GetBoolArg("-spentindex", DEFAULT_SPENTINDEX);
+        options.timestampindex = args.GetBoolArg("-timestampindex", DEFAULT_TIMESTAMPINDEX);
+
         uiInterface.InitMessage(_("Loading block index…").translated);
         const auto load_block_index_start_time{SteadyClock::now()};
         auto catch_exceptions = [](auto&& f) {
