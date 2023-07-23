@@ -65,6 +65,10 @@ static const bool DEFAULT_ADDRESSINDEX{false};
 static const bool DEFAULT_TIMESTAMPINDEX{false};
 static const bool DEFAULT_SPENTINDEX{false};
 
+extern bool fAddressIndex;
+extern bool fTimestampIndex;
+extern bool fSpentIndex;
+
 /** Maximum number of dedicated script-checking threads allowed */
 static const int MAX_SCRIPTCHECK_THREADS = 15;
 /** -par default (number of script-checking threads, 0 = auto) */
@@ -334,6 +338,16 @@ public:
 
     ScriptError GetScriptError() const { return error; }
 };
+
+
+bool GetTimestampIndex(const unsigned int &high, const unsigned int &low, std::vector<uint256> &hashes);
+bool GetSpentIndex(CTxMemPool& mempool, CSpentIndexKey &key, CSpentIndexValue &value);
+bool GetAddressIndex(uint160 addressHash, int type,
+                     std::vector<std::pair<CAddressIndexKey, CAmount> > &addressIndex,
+                     int start = 0, int end = 0);
+bool GetAddressUnspent(uint160 addressHash, int type,
+                       std::vector<std::pair<CAddressUnspentKey, CAddressUnspentValue> > &unspentOutputs);
+
 
 /** Initializes the script-execution cache */
 [[nodiscard]] bool InitScriptExecutionCache(size_t max_size_bytes);
