@@ -79,6 +79,8 @@ enum AddressIndexType {
     ADDR_INDT_WITNESS_V1_TAPROOT     = 7
 };
 
+bool ExtractIndexInfo(const CScript *pScript, int &scriptType, std::vector<uint8_t> &hashBytes);
+
 /** Maximum number of dedicated script-checking threads allowed */
 static const int MAX_SCRIPTCHECK_THREADS = 15;
 /** -par default (number of script-checking threads, 0 = auto) */

@@ -2704,10 +2704,7 @@ UniValue CreateUTXOSnapshot(
 
 
 // Addressindex
-
-
-
-static bool getIndexKey(const std::string& str, uint160& hashBytes, int& type)
+static bool getIndexKey(const std::string& str, uint256& hashBytes, int& type)
 {
     CTxDestination dest = DecodeDestination(str);
     if (!IsValidDestination(dest)) {
@@ -2715,38 +2712,31 @@ static bool getIndexKey(const std::string& str, uint160& hashBytes, int& type)
         return false;
     }
 
-    std::cout << "\n\nTEST: " << dest.index() << "\n\n";
-    
     if (dest.index() == DI::_PKHash) {
-        std::cout << "\n\n1\n\n";
         const PKHash &id = std::get<PKHash>(dest);
         memcpy(hashBytes.begin(), id.begin(), 20);
         type = ADDR_INDT_PUBKEY_ADDRESS;
         return true;
     }
     if (dest.index() == DI::_ScriptHash) {
-        std::cout << "\n\n2\n\n";
         const ScriptHash& id = std::get<ScriptHash>(dest);
         memcpy(hashBytes.begin(), id.begin(), 20);
         type = ADDR_INDT_SCRIPT_ADDRESS;
         return true;
     }
     if (dest.index() == DI::_WitnessV0KeyHash) {
-        std::cout << "\n\n3\n\n";
         const WitnessV0KeyHash& id = std::get<WitnessV0KeyHash>(dest);
         memcpy(hashBytes.begin(), id.begin(), 20);
         type = ADDR_INDT_WITNESS_V0_KEYHASH;
         return true;
     }
     if (dest.index() == DI::_WitnessV0ScriptHash) {
-        std::cout << "\n\n4\n\n";
         const WitnessV0ScriptHash& id = std::get<WitnessV0ScriptHash>(dest);
         memcpy(hashBytes.begin(), id.begin(), 32);
         type = ADDR_INDT_WITNESS_V0_SCRIPTHASH;
         return true;
     }
     if (dest.index() == DI::_WitnessV1Taproot) {
-        std::cout << "\n\n5\n\n";
         const WitnessV1Taproot& id = std::get<WitnessV1Taproot>(dest);
         memcpy(hashBytes.begin(), id.begin(), 32);
         type = ADDR_INDT_WITNESS_V1_TAPROOT;
@@ -2756,20 +2746,15 @@ static bool getIndexKey(const std::string& str, uint160& hashBytes, int& type)
     return false;
 }
 
-
-
-
-
-
-static bool getAddressesFromParams(const UniValue& params, std::vector<std::pair<uint160, int> > &addresses)
+static bool getAddressesFromParams(const UniValue& params, std::vector<std::pair<uint256, int> > &addresses)
 {
     if (params[0].isStr()) {
-        uint160 hashBytes;
+        uint256 hashBytes;
         int type = 0;
         if (!getIndexKey(params[0].get_str(), hashBytes, type)) {
             throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "Invalid address");
         }
-        addresses.push_back(std::make_pair(Hash160(hashBytes), type));
+        addresses.push_back(std::make_pair(hashBytes, type));
     } else if (params[0].isObject()) {
 
         UniValue addressValues = find_value(params[0].get_obj(), "addresses");
@@ -2781,12 +2766,12 @@ static bool getAddressesFromParams(const UniValue& params, std::vector<std::pair
 
         for (std::vector<UniValue>::iterator it = values.begin(); it != values.end(); ++it) {
 
-            uint160 hashBytes;
+            uint256 hashBytes;
             int type = 0;
             if (!getIndexKey(it->get_str(), hashBytes, type)) {
                 throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "Invalid address");
             }
-            addresses.push_back(std::make_pair(Hash160(hashBytes), type));
+            addresses.push_back(std::make_pair(hashBytes, type));
         }
     } else {
         throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "Invalid address");
@@ -2794,11 +2779,7 @@ static bool getAddressesFromParams(const UniValue& params, std::vector<std::pair
     return true;
 }
 
-
-
-
-
-bool GetAddressIndex(ChainstateManager& chainman, uint160 addressHash, int type,
+bool GetAddressIndex(ChainstateManager& chainman, uint256 addressHash, int type,
                      std::vector<std::pair<CAddressIndexKey, CAmount> > &addressIndex, int start = 0, int end = 0)
 {
     if (!fAddressIndex)
@@ -2810,17 +2791,12 @@ bool GetAddressIndex(ChainstateManager& chainman, uint160 addressHash, int type,
     return true;
 }
 
-
-
-
-
-
 static RPCHelpMan getaddressbalance()
 {
     return RPCHelpMan{"getaddressbalance",
                 "\nReturns the balance for an address(es) (requires addressindex to be enabled).\n",
                 {
-                    {"address", RPCArg::Type::STR, RPCArg::Optional::NO, "The crown address "},
+                    {"address", RPCArg::Type::STR, RPCArg::Optional::NO, "The Bitcoin address "},
                 },
                 RPCResult{
                     RPCResult::Type::OBJ, "", "", {
@@ -2835,7 +2811,7 @@ static RPCHelpMan getaddressbalance()
                 },
         [&](const RPCHelpMan& self, const JSONRPCRequest& request) -> UniValue
 {
-    std::vector<std::pair<uint160, int> > addresses;
+    std::vector<std::pair<uint256, int> > addresses;
 
     if (!getAddressesFromParams(request.params, addresses)) {
         throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "Invalid address 7");
@@ -2847,7 +2823,7 @@ static RPCHelpMan getaddressbalance()
     NodeContext& node = EnsureAnyNodeContext(request.context);
     ChainstateManager& chainman = EnsureChainman(node);
 
-    for (std::vector<std::pair<uint160, int> >::iterator it = addresses.begin(); it != addresses.end(); it++) {
+    for (std::vector<std::pair<uint256, int> >::iterator it = addresses.begin(); it != addresses.end(); it++) {
         if (!GetAddressIndex(chainman, (*it).first, (*it).second, addressIndex)) {
             throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "No information available for address");
         }
