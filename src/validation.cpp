@@ -141,8 +141,6 @@ bool ExtractIndexInfo(const CScript *pScript, int &scriptType, std::vector<uint8
             case 0: scriptType = ADDR_INDT_WITNESS_V0_KEYHASH; break;
             case 1: scriptType = ADDR_INDT_WITNESS_V1_TAPROOT; break;
         }
-
-        std::cout << "\n\nHUI: " << scriptType << "\n\n";
     }
 
     return true;
