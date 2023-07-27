@@ -1980,13 +1980,13 @@ DisconnectResult Chainstate::DisconnectBlock(const CBlock& block, const CBlockIn
                     addressIndex.push_back(std::make_pair(CAddressIndexKey(1, hashBytes, pindex->nHeight, i, hash, k, false), out.nValue));
                     addressUnspentIndex.push_back(std::make_pair(CAddressUnspentKey(1, hashBytes, hash, k), CAddressUnspentValue()));
                 } else if (out.scriptPubKey.IsPayToWitnessScriptHash()) {
-                    std::vector<unsigned char> hashBytes(out.scriptPubKey.begin() + 2, out.scriptPubKey.end());
+                    std::vector<unsigned char> hashBytes(out.scriptPubKey.begin() + 2, out.scriptPubKey.begin() + 34);
 
                     // undo receiving activity
-                    addressIndex.push_back(std::make_pair(CAddressIndexKey(3, Hash160(hashBytes), pindex->nHeight, i, hash, k, false), out.nValue));
+                    addressIndex.push_back(std::make_pair(CAddressIndexKey(6, Hash160(hashBytes), pindex->nHeight, i, hash, k, false), out.nValue));
 
                     // undo unspent index
-                    addressUnspentIndex.push_back(std::make_pair(CAddressUnspentKey(3, Hash160(hashBytes), hash, k), CAddressUnspentValue()));
+                    addressUnspentIndex.push_back(std::make_pair(CAddressUnspentKey(6, Hash160(hashBytes), hash, k), CAddressUnspentValue()));
                 } else {
                     continue;
                 }
@@ -2061,13 +2061,13 @@ DisconnectResult Chainstate::DisconnectBlock(const CBlock& block, const CBlockIn
 
                         addressUnspentIndex.push_back(std::make_pair(CAddressUnspentKey(1, hashBytes, hash, j), CAddressUnspentValue()));
                     } else if (prevout.scriptPubKey.IsPayToWitnessScriptHash()) {
-                        std::vector<unsigned char> hashBytes(prevout.scriptPubKey.begin() + 2, prevout.scriptPubKey.end());
+                        std::vector<unsigned char> hashBytes(prevout.scriptPubKey.begin() + 2, prevout.scriptPubKey.begin() + 34);
 
                         // undo spending activity
-                        addressIndex.push_back(std::make_pair(CAddressIndexKey(3, Hash160(hashBytes), pindex->nHeight, i, hash, j, true), prevout.nValue * -1));
+                        addressIndex.push_back(std::make_pair(CAddressIndexKey(6, Hash160(hashBytes), pindex->nHeight, i, hash, j, true), prevout.nValue * -1));
 
                         // restore unspent index
-                        addressUnspentIndex.push_back(std::make_pair(CAddressUnspentKey(3, Hash160(hashBytes), input.prevout.hash, input.prevout.n), CAddressUnspentValue(prevout.nValue, prevout.scriptPubKey, undoHeight)));
+                        addressUnspentIndex.push_back(std::make_pair(CAddressUnspentKey(6, Hash160(hashBytes), input.prevout.hash, input.prevout.n), CAddressUnspentValue(prevout.nValue, prevout.scriptPubKey, undoHeight)));
 
                     } else {
                         continue;
@@ -2460,8 +2460,8 @@ bool Chainstate::ConnectBlock(const CBlock& block, BlockValidationState& state, 
                         hashBytes = Hash160(prevout.scriptPubKey.begin()+1, prevout.scriptPubKey.end()-1);
                         addressType = 1;
                     } else if (prevout.scriptPubKey.IsPayToWitnessScriptHash()) {
-                        hashBytes = Hash160(std::vector <unsigned char> (prevout.scriptPubKey.begin() + 2, prevout.scriptPubKey.end()));
-                        addressType = 3;
+                        hashBytes = Hash160(std::vector <unsigned char> (prevout.scriptPubKey.begin() + 2, prevout.scriptPubKey.begin() + 34));
+                        addressType = 6;
                     } else {
                         hashBytes.SetNull();
                         addressType = 0;
@@ -2537,13 +2537,13 @@ bool Chainstate::ConnectBlock(const CBlock& block, BlockValidationState& state, 
                     addressIndex.push_back(std::make_pair(CAddressIndexKey(1, hashBytes, pindex->nHeight, i, txhash, k, false), out.nValue));
                     addressUnspentIndex.push_back(std::make_pair(CAddressUnspentKey(1, hashBytes, txhash, k), CAddressUnspentValue(out.nValue, out.scriptPubKey, pindex->nHeight)));
                 } else if (out.scriptPubKey.IsPayToWitnessScriptHash()) {
-                    std::vector<unsigned char> hashBytes(out.scriptPubKey.begin() + 2, out.scriptPubKey.end());
+                    std::vector<unsigned char> hashBytes(out.scriptPubKey.begin() + 2, out.scriptPubKey.begin() + 34);
 
                     // record receiving activity
-                    addressIndex.push_back(std::make_pair(CAddressIndexKey(3, Hash160(hashBytes), pindex->nHeight, i, tx.GetHash(), k, false), out.nValue));
+                    addressIndex.push_back(std::make_pair(CAddressIndexKey(6, Hash160(hashBytes), pindex->nHeight, i, tx.GetHash(), k, false), out.nValue));
 
                     // record unspent output
-                    addressUnspentIndex.push_back(std::make_pair(CAddressUnspentKey(3, Hash160(hashBytes), tx.GetHash(), k), CAddressUnspentValue(out.nValue, out.scriptPubKey, pindex->nHeight)));
+                    addressUnspentIndex.push_back(std::make_pair(CAddressUnspentKey(6, Hash160(hashBytes), tx.GetHash(), k), CAddressUnspentValue(out.nValue, out.scriptPubKey, pindex->nHeight)));
 
                 } else {
                     continue;
@@ -6060,3 +6060,53 @@ bool ChainstateManager::ValidatedSnapshotCleanup()
     }
     return true;
 }
+
+
+// bool GetTimestampIndex(const unsigned int &high, const unsigned int &low, std::vector<uint256> &hashes)
+// {
+//     if (!fTimestampIndex)
+//         return error("Timestamp index not enabled");
+
+//     if (!pblocktree->ReadTimestampIndex(high, low, hashes))
+//         return error("Unable to get hashes for timestamps");
+
+//     return true;
+// }
+
+// bool GetSpentIndex(CTxMemPool& mempool, CSpentIndexKey &key, CSpentIndexValue &value)
+// {
+//     if (!fSpentIndex)
+//         return false;
+
+//     if (mempool.getSpentIndex(key, value))
+//         return true;
+
+//     if (!pblocktree->ReadSpentIndex(key, value))
+//         return false;
+
+//     return true;
+// }
+
+// bool GetAddressIndex(uint160 addressHash, int type,
+//                      std::vector<std::pair<CAddressIndexKey, CAmount> > &addressIndex, int start, int end)
+// {
+//     if (!fAddressIndex)
+//         return error("address index not enabled");
+
+//     if (!pblocktree->ReadAddressIndex(addressHash, type, addressIndex, start, end))
+//         return error("unable to get txids for address");
+
+//     return true;
+// }
+
+// bool GetAddressUnspent(uint160 addressHash, int type,
+//                        std::vector<std::pair<CAddressUnspentKey, CAddressUnspentValue> > &unspentOutputs)
+// {
+//     if (!fAddressIndex)
+//         return error("address index not enabled");
+
+//     if (!pblocktree->ReadAddressUnspentIndex(addressHash, type, unspentOutputs))
+//         return error("unable to get txids for address");
+
+//     return true;
+// }
