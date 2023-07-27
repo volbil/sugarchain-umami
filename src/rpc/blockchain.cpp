@@ -2721,31 +2721,38 @@ static bool getIndexKey(const std::string& str, uint160& hashBytes, int& type)
         std::cout << "\n\n1\n\n";
         const PKHash &id = std::get<PKHash>(dest);
         memcpy(hashBytes.begin(), id.begin(), 20);
-        type = 1;
+        type = ADDR_INDT_PUBKEY_ADDRESS;
         return true;
     }
     if (dest.index() == DI::_ScriptHash) {
         std::cout << "\n\n2\n\n";
         const ScriptHash& id = std::get<ScriptHash>(dest);
         memcpy(hashBytes.begin(), id.begin(), 20);
-        type = 2;
+        type = ADDR_INDT_SCRIPT_ADDRESS;
         return true;
     }
     if (dest.index() == DI::_WitnessV0KeyHash) {
         std::cout << "\n\n3\n\n";
         const WitnessV0KeyHash& id = std::get<WitnessV0KeyHash>(dest);
         memcpy(hashBytes.begin(), id.begin(), 20);
-        type = 5;
+        type = ADDR_INDT_WITNESS_V0_KEYHASH;
         return true;
     }
     if (dest.index() == DI::_WitnessV0ScriptHash) {
         std::cout << "\n\n4\n\n";
         const WitnessV0ScriptHash& id = std::get<WitnessV0ScriptHash>(dest);
         memcpy(hashBytes.begin(), id.begin(), 32);
-        type = 6;
+        type = ADDR_INDT_WITNESS_V0_SCRIPTHASH;
         return true;
     }
-    type = 0;
+    if (dest.index() == DI::_WitnessV1Taproot) {
+        std::cout << "\n\n5\n\n";
+        const WitnessV1Taproot& id = std::get<WitnessV1Taproot>(dest);
+        memcpy(hashBytes.begin(), id.begin(), 32);
+        type = ADDR_INDT_WITNESS_V1_TAPROOT;
+        return true;
+    }
+    type = ADDR_INDT_UNKNOWN;
     return false;
 }
 
@@ -2762,7 +2769,7 @@ static bool getAddressesFromParams(const UniValue& params, std::vector<std::pair
         if (!getIndexKey(params[0].get_str(), hashBytes, type)) {
             throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "Invalid address");
         }
-        addresses.push_back(std::make_pair(hashBytes, type));
+        addresses.push_back(std::make_pair(Hash160(hashBytes), type));
     } else if (params[0].isObject()) {
 
         UniValue addressValues = find_value(params[0].get_obj(), "addresses");
@@ -2779,7 +2786,7 @@ static bool getAddressesFromParams(const UniValue& params, std::vector<std::pair
             if (!getIndexKey(it->get_str(), hashBytes, type)) {
                 throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "Invalid address");
             }
-            addresses.push_back(std::make_pair(hashBytes, type));
+            addresses.push_back(std::make_pair(Hash160(hashBytes), type));
         }
     } else {
         throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "Invalid address");
