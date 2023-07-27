@@ -97,17 +97,55 @@ static bool getAddressesFromParams(const UniValue& params, std::vector<std::pair
     return true;
 }
 
-bool GetAddressIndex(ChainstateManager& chainman, uint256 addressHash, int type,
+bool GetAddressIndex(ChainstateManager &chainman, const uint256 &addressHash, int type,
                      std::vector<std::pair<CAddressIndexKey, CAmount> > &addressIndex, int start = 0, int end = 0)
 {
-    if (!fAddressIndex)
-        throw JSONRPCError(RPC_MISC_ERROR, "Address index is not enabled.");
+    auto& pblocktree{chainman.m_blockman.m_block_tree_db};
 
-    if (!chainman.m_blockman.m_block_tree_db->ReadAddressIndex(addressHash, type, addressIndex, start, end))
-        return error("unable to get txids for address");
+    if (!fAddressIndex) {
+        return error("Address index not enabled");
+    }
+
+    if (!pblocktree->ReadAddressIndex(addressHash, type, addressIndex, start, end)) {
+        return error("Unable to get txids for address");
+    }
 
     return true;
-}
+};
+
+static bool HashOnchainActive(ChainstateManager &chainman, const uint256 &hash) EXCLUSIVE_LOCKS_REQUIRED(cs_main)
+{
+    CBlockIndex* pblockindex = chainman.m_blockman.LookupBlockIndex(hash);
+
+    if (!chainman.ActiveChain().Contains(pblockindex)) {
+        return false;
+    }
+
+    return true;
+};
+
+bool GetTimestampIndex(ChainstateManager &chainman, const unsigned int &high, const unsigned int &low, const bool fActiveOnly, std::vector<std::pair<uint256, unsigned int> > &hashes)
+{
+    auto& pblocktree{chainman.m_blockman.m_block_tree_db};
+    if (!fTimestampIndex) {
+        return error("Timestamp index not enabled");
+    }
+    if (!pblocktree->ReadTimestampIndex(high, low, hashes)) {
+        return error("Unable to get hashes for timestamps");
+    }
+
+    if (fActiveOnly) {
+        for (auto it = hashes.begin(); it != hashes.end(); ) {
+            if (!HashOnchainActive(chainman, it->first)) {
+                it = hashes.erase(it);
+            } else {
+                ++it;
+            }
+        }
+    }
+
+    return true;
+};
 
 static RPCHelpMan getaddressbalance()
 {
@@ -137,9 +175,7 @@ static RPCHelpMan getaddressbalance()
 
     std::vector<std::pair<CAddressIndexKey, CAmount> > addressIndex;
 
-    LOCK(cs_main);
-    NodeContext& node = EnsureAnyNodeContext(request.context);
-    ChainstateManager& chainman = EnsureChainman(node);
+    ChainstateManager& chainman = EnsureAnyChainman(request.context);
 
     for (std::vector<std::pair<uint256, int> >::iterator it = addresses.begin(); it != addresses.end(); it++) {
         if (!GetAddressIndex(chainman, (*it).first, (*it).second, addressIndex)) {
@@ -147,8 +183,7 @@ static RPCHelpMan getaddressbalance()
         }
     }
 
-    const CChain& active_chain = chainman.ActiveChain();
-    int nHeight = (unsigned int) active_chain.Height();
+    int nHeight = (unsigned int) chainman.ActiveChain().Height();
 
     CAmount balance = 0;
     CAmount balance_spendable = 0;
@@ -179,11 +214,189 @@ static RPCHelpMan getaddressbalance()
 }
 
 
+static RPCHelpMan getaddresstxids()
+{
+    return RPCHelpMan{"getaddresstxids",
+                "\nReturns the txids for an address(es) (requires addressindex to be enabled).\n",
+                {
+                    {"addresses", RPCArg::Type::ARR, RPCArg::Optional::NO, "A json array with addresses.\n",
+                        {
+                            {"address", RPCArg::Type::STR, RPCArg::Optional::NO, "The base58check encoded address."},
+                        },
+                    RPCArgOptions{.skip_type_check = true}},
+                    {"start", RPCArg::Type::NUM, RPCArg::Default{0}, "The start block height."},
+                    {"end", RPCArg::Type::NUM, RPCArg::Default{0}, "The end block height."},
+                },
+                RPCResult{
+                    RPCResult::Type::ARR, "", "", {
+                        {RPCResult::Type::STR_HEX, "transactionid", "The transaction txid"},
+                    }
+                },
+                RPCExamples{
+            HelpExampleCli("getaddresstxids", "'{\"addresses\": [\"Pb7FLL3DyaAVP2eGfRiEkj4U8ZJ3RHLY9g\"]}'") +
+            "\nAs a JSON-RPC call\n"
+            + HelpExampleRpc("getaddresstxids", "{\"addresses\": [\"Pb7FLL3DyaAVP2eGfRiEkj4U8ZJ3RHLY9g\"]}")
+                },
+        [&](const RPCHelpMan& self, const JSONRPCRequest& request) -> UniValue
+{
+    if (!fAddressIndex) {
+        throw JSONRPCError(RPC_MISC_ERROR, "Address index is not enabled.");
+    }
+    ChainstateManager &chainman = EnsureAnyChainman(request.context);
+
+    std::vector<std::pair<uint256, int> > addresses;
+
+    if (!getAddressesFromParams(request.params, addresses)) {
+        throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "Invalid address");
+    }
+
+    int start = 0;
+    int end = 0;
+    if (request.params[0].isObject()) {
+        UniValue startValue = find_value(request.params[0].get_obj(), "start");
+        UniValue endValue = find_value(request.params[0].get_obj(), "end");
+        if (startValue.isNum() && endValue.isNum()) {
+            start = startValue.getInt<int>();
+            end = endValue.getInt<int>();
+        }
+    }
+
+    std::vector<std::pair<CAddressIndexKey, CAmount> > addressIndex;
+
+    for (std::vector<std::pair<uint256, int> >::iterator it = addresses.begin(); it != addresses.end(); it++) {
+        if (start > 0 && end > 0) {
+            if (!GetAddressIndex(chainman, it->first, it->second, addressIndex, start, end)) {
+                throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "No information available for address");
+            }
+        } else {
+            if (!GetAddressIndex(chainman, it->first, it->second, addressIndex)) {
+                throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "No information available for address");
+            }
+        }
+    }
+
+    std::set<std::pair<int, std::string> > txids;
+    UniValue result(UniValue::VARR);
+
+    for (std::vector<std::pair<CAddressIndexKey, CAmount> >::const_iterator it=addressIndex.begin(); it!=addressIndex.end(); it++) {
+        int height = it->first.blockHeight;
+        std::string txid = it->first.txhash.GetHex();
+
+        if (addresses.size() > 1) {
+            txids.insert(std::make_pair(height, txid));
+        } else {
+            if (txids.insert(std::make_pair(height, txid)).second) {
+                result.push_back(txid);
+            }
+        }
+    }
+
+    if (addresses.size() > 1) {
+        for (std::set<std::pair<int, std::string> >::const_iterator it=txids.begin(); it!=txids.end(); it++) {
+            result.push_back(it->second);
+        }
+    }
+
+    return result;
+},
+    };
+}
+
+
+static RPCHelpMan getblockhashes()
+{
+    return RPCHelpMan{"getblockhashes",
+                "\nReturns array of hashes of blocks within the timestamp range provided.\n",
+                {
+                    {"high", RPCArg::Type::NUM, RPCArg::Optional::NO, "The newer block timestamp."},
+                    {"low", RPCArg::Type::NUM, RPCArg::Optional::NO, "The older block timestamp."},
+                    {"options", RPCArg::Type::OBJ, RPCArg::Default{UniValue::VOBJ}, "",
+                        {
+                            {"noOrphans", RPCArg::Type::BOOL, RPCArg::Default{false}, "Only include blocks on the main chain."},
+                            {"logicalTimes", RPCArg::Type::BOOL, RPCArg::Default{false}, "Include logical timestamps with hashes."},
+                        },
+                    },
+                },
+                RPCResults{
+                    {RPCResult::Type::ARR, "", "", {
+                        {RPCResult::Type::STR_HEX, "hash", "The block hash"},
+                    }},
+                    {RPCResult::Type::ARR, "", "", {
+                        {RPCResult::Type::OBJ, "", "", {
+                            {RPCResult::Type::STR_HEX, "blockhash", "The block hash"},
+                            {RPCResult::Type::NUM, "logicalts", "The logical timestamp"},
+                            {RPCResult::Type::NUM, "height", "The height of the block containing the spending tx"},
+                        }}
+                    }}
+                },
+                RPCExamples{
+            HelpExampleCli("getblockhashes", "1231614698 1231024505 '{\"noOrphans\":false, \"logicalTimes\":true}'") +
+            "\nAs a JSON-RPC call\n"
+            + HelpExampleRpc("getblockhashes", "1231614698, 1231024505")
+                },
+        [&](const RPCHelpMan& self, const JSONRPCRequest& request) -> UniValue
+{
+    ChainstateManager& chainman = EnsureAnyChainman(request.context);
+
+    unsigned int high = request.params[0].getInt<int>();
+    unsigned int low = request.params[1].getInt<int>();
+    bool fActiveOnly = false;
+    bool fLogicalTS = false;
+
+    if (request.params.size() > 2) {
+        if (request.params[2].isObject()) {
+            UniValue noOrphans = find_value(request.params[2].get_obj(), "noOrphans");
+            UniValue returnLogical = find_value(request.params[2].get_obj(), "logicalTimes");
+
+            if (noOrphans.isBool()) {
+                fActiveOnly = noOrphans.get_bool();
+            }
+            if (returnLogical.isBool()) {
+                fLogicalTS = returnLogical.get_bool();
+            }
+        }
+    }
+
+    std::vector<std::pair<uint256, unsigned int> > blockHashes;
+
+    {
+        LOCK(cs_main);
+        if (!GetTimestampIndex(chainman, high, low, fActiveOnly, blockHashes)) {
+            throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "No information available for block hashes");
+        }
+    }
+
+    UniValue result(UniValue::VARR);
+
+    for (std::vector<std::pair<uint256, unsigned int> >::const_iterator it=blockHashes.begin(); it!=blockHashes.end(); it++) {
+        if (fLogicalTS) {
+            UniValue item(UniValue::VOBJ);
+            item.pushKV("blockhash", it->first.GetHex());
+            item.pushKV("logicalts", int(it->second));
+            result.push_back(item);
+        } else {
+            result.push_back(it->first.GetHex());
+        }
+    }
+
+    return result;
+},
+    };
+}
+
+// getaddressdeltas
+// getaddressutxos
+// getaddressmempool
+// getblockhashes
+// getspentinfo
+
 void RegisterIndexRPCCommands(CRPCTable& t)
 {
     static const CRPCCommand commands[]{
         // Address index
         {"getaddressbalance", &getaddressbalance},
+        {"getaddresstxids",   &getaddresstxids},
+        // {"getblockhashes",    &getblockhashes},
     };
     for (const auto& c : commands) {
         t.appendCommand(c.name, &c);
