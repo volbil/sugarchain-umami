@@ -129,6 +129,23 @@ static bool getAddressesFromParams(const UniValue& params, std::vector<std::pair
     return true;
 }
 
+
+bool GetSpentIndex(ChainstateManager &chainman, const CSpentIndexKey &key, CSpentIndexValue &value, const CTxMemPool *pmempool)
+{
+    auto& pblocktree{chainman.m_blockman.m_block_tree_db};
+    if (!fSpentIndex) {
+        return false;
+    }
+    if (pmempool && pmempool->getSpentIndex(key, value)) {
+        return true;
+    }
+    if (!pblocktree->ReadSpentIndex(key, value)) {
+        return false;
+    }
+
+    return true;
+};
+
 bool GetAddressIndex(ChainstateManager &chainman, const uint256 &addressHash, int type,
                      std::vector<std::pair<CAddressIndexKey, CAmount> > &addressIndex, int start = 0, int end = 0)
 {
@@ -765,7 +782,63 @@ static RPCHelpMan getaddressmempool()
 }
 
 
-// getspentinfo
+static RPCHelpMan getspentinfo()
+{
+    return RPCHelpMan{"getspentinfo",
+                "\nReturns the txid and index where an output is spent.\n",
+                {
+                    {"inputs", RPCArg::Type::OBJ, RPCArg::Optional::NO, "",
+                        {
+                            {"txid", RPCArg::Type::STR_HEX, RPCArg::Optional::NO, "The hex string of the txid."},
+                            {"index", RPCArg::Type::NUM, RPCArg::Optional::NO, "The output number."},
+                        },
+                    },
+                },
+                RPCResult{
+                    RPCResult::Type::OBJ, "", "", {
+                        {RPCResult::Type::STR_HEX, "txid", "The transaction id"},
+                        {RPCResult::Type::NUM, "index", "The spending input index"},
+                        {RPCResult::Type::NUM, "height", "The height of the block containing the spending tx"},
+                    }
+                },
+                RPCExamples{
+            HelpExampleCli("getspentinfo", "'{\"txid\": \"0437cd7f8525ceed2324359c2d0ba26006d92d856a9c20fa0241106ee5a597c9\", \"index\": 0}'") +
+            "\nAs a JSON-RPC call\n"
+            + HelpExampleRpc("getspentinfo", "{\"txid\": \"0437cd7f8525ceed2324359c2d0ba26006d92d856a9c20fa0241106ee5a597c9\", \"index\": 0}")
+                },
+        [&](const RPCHelpMan& self, const JSONRPCRequest& request) -> UniValue
+{
+    node::NodeContext &node = EnsureAnyNodeContext(request.context);
+    const CTxMemPool& mempool = EnsureMemPool(node);
+    ChainstateManager &chainman = EnsureChainman(node);
+
+    UniValue txidValue = find_value(request.params[0].get_obj(), "txid");
+    UniValue indexValue = find_value(request.params[0].get_obj(), "index");
+
+    if (!txidValue.isStr() || !indexValue.isNum()) {
+        throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "Invalid txid or index");
+    }
+
+    uint256 txid = ParseHashV(txidValue, "txid");
+    int outputIndex = indexValue.getInt<int>();
+
+    CSpentIndexKey key(txid, outputIndex);
+    CSpentIndexValue value;
+
+    if (!GetSpentIndex(chainman, key, value, &mempool)) {
+        throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "Unable to get spent info");
+    }
+
+    UniValue obj(UniValue::VOBJ);
+    obj.pushKV("txid", value.txid.GetHex());
+    obj.pushKV("index", int(value.inputIndex));
+    obj.pushKV("height", value.blockHeight);
+
+    return obj;
+},
+    };
+}
+
 
 void RegisterIndexRPCCommands(CRPCTable& t)
 {
@@ -777,6 +850,7 @@ void RegisterIndexRPCCommands(CRPCTable& t)
         {"getaddressutxos",   &getaddressutxos},
         {"getaddresstxids",   &getaddresstxids},
         {"getblockhashes",    &getblockhashes},
+        {"getspentinfo",      &getspentinfo},
     };
     for (const auto& c : commands) {
         t.appendCommand(c.name, &c);
