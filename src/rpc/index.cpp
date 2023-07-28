@@ -685,13 +685,93 @@ static RPCHelpMan getblockhashes()
     };
 }
 
-// getaddressmempool
+
+static RPCHelpMan getaddressmempool()
+{
+    return RPCHelpMan{"getaddressmempool",
+                "\nReturns all mempool deltas for an address (requires addressindex to be enabled).\n",
+                {
+                    {"addresses", RPCArg::Type::ARR, RPCArg::Optional::NO, "A json array with addresses.\n",
+                        {
+                            {"address", RPCArg::Type::STR, RPCArg::Optional::NO, "The base58check encoded address."},
+                        },
+                    RPCArgOptions{.skip_type_check = true}},
+                },
+                RPCResult{
+                    RPCResult::Type::ARR, "", "", {
+                        {RPCResult::Type::OBJ, "", "", {
+                            {RPCResult::Type::STR, "address", "The base58check encoded address"},
+                            {RPCResult::Type::STR_HEX, "txid", "The related txids"},
+                            {RPCResult::Type::NUM, "index", "The related input or output index"},
+                            {RPCResult::Type::NUM, "satoshis", "The difference of satoshis"},
+                            {RPCResult::Type::NUM_TIME, "timestamp", "The time the transaction entered the mempool (seconds)"},
+                            {RPCResult::Type::STR_HEX, "prevtxid", /*optional=*/true, "The previous txid (if spending)"},
+                            {RPCResult::Type::NUM, "prevout", /*optional=*/true, "The previous transaction output index (if spending)"},
+                        }}
+                    }
+                },
+                RPCExamples{
+            HelpExampleCli("getaddressmempool", "'{\"addresses\": [\"Pb7FLL3DyaAVP2eGfRiEkj4U8ZJ3RHLY9g\"]}'") +
+            "\nAs a JSON-RPC call\n"
+            + HelpExampleRpc("getaddressmempool", "{\"addresses\": [\"Pb7FLL3DyaAVP2eGfRiEkj4U8ZJ3RHLY9g\"]}")
+                },
+        [&](const RPCHelpMan& self, const JSONRPCRequest& request) -> UniValue
+{
+    node::NodeContext &node = EnsureAnyNodeContext(request.context);
+    const CTxMemPool& mempool = EnsureMemPool(node);
+
+    if (!fAddressIndex) {
+        throw JSONRPCError(RPC_MISC_ERROR, "Address index is not enabled.");
+    }
+
+    std::vector<std::pair<uint256, int> > addresses;
+    if (!getAddressesFromParams(request.params, addresses)) {
+        throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "Invalid address");
+    }
+
+    std::vector<std::pair<CMempoolAddressDeltaKey, CMempoolAddressDelta> > indexes;
+    if (!mempool.getAddressIndex(addresses, indexes)) {
+        throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "No information available for address");
+    }
+
+    std::sort(indexes.begin(), indexes.end(), timestampSort);
+
+    UniValue result(UniValue::VARR);
+
+    for (std::vector<std::pair<CMempoolAddressDeltaKey, CMempoolAddressDelta> >::iterator it = indexes.begin();
+         it != indexes.end(); it++) {
+
+        std::string address;
+        if (!getAddressFromIndex(it->first.type, it->first.addressBytes, address)) {
+            throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "Unknown address type");
+        }
+
+        UniValue delta(UniValue::VOBJ);
+        delta.pushKV("address", address);
+        delta.pushKV("txid", it->first.txhash.GetHex());
+        delta.pushKV("index", int(it->first.index));
+        delta.pushKV("satoshis", it->second.amount);
+        delta.pushKV("timestamp", it->second.time);
+        if (it->second.amount < 0) {
+            delta.pushKV("prevtxid", it->second.prevhash.GetHex());
+            delta.pushKV("prevout", int(it->second.prevout));
+        }
+        result.push_back(delta);
+    }
+
+    return result;
+},
+    };
+}
+
+
 // getspentinfo
 
 void RegisterIndexRPCCommands(CRPCTable& t)
 {
     static const CRPCCommand commands[]{
         // Address index
+        {"getaddressmempool", &getaddressmempool},
         {"getaddressbalance", &getaddressbalance},
         {"getaddressdeltas",  &getaddressdeltas},
         {"getaddressutxos",   &getaddressutxos},
