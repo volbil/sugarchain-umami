@@ -534,48 +534,36 @@ void CTxMemPool::addAddressIndex(const CTxMemPoolEntry &entry, const CCoinsViewC
         const CTxIn input = tx.vin[j];
         const Coin& coin = view.AccessCoin(input.prevout);
         const CTxOut &prevout = coin.out;
-        // if (prevout.scriptPubKey.IsPayToScriptHash()) {
-        //     std::vector<unsigned char> hashBytes(prevout.scriptPubKey.begin()+2, prevout.scriptPubKey.begin()+22);
-        //     CMempoolAddressDeltaKey key(2, uint160(hashBytes), txhash, j, 1);
-        //     CMempoolAddressDelta delta(count_seconds(entry.GetTime()), prevout.nValue * -1, input.prevout.hash, input.prevout.n);
-        //     mapAddress.insert(std::make_pair(key, delta));
-        //     inserted.push_back(key);
-        // } else if (prevout.scriptPubKey.IsPayToPublicKeyHash()) {
-        //     std::vector<unsigned char> hashBytes(prevout.scriptPubKey.begin()+3, prevout.scriptPubKey.begin()+23);
-        //     CMempoolAddressDeltaKey key(1, uint160(hashBytes), txhash, j, 1);
-        //     CMempoolAddressDelta delta(count_seconds(entry.GetTime()), prevout.nValue * -1, input.prevout.hash, input.prevout.n);
-        //     mapAddress.insert(std::make_pair(key, delta));
-        //     inserted.push_back(key);
-        // } else if (prevout.scriptPubKey.IsPayToPublicKey()) {
-        //     uint160 hashBytes(Hash160(prevout.scriptPubKey.begin()+1, prevout.scriptPubKey.end()-1));
-        //     CMempoolAddressDeltaKey key(1, hashBytes, txhash, j, 1);
-        //     CMempoolAddressDelta delta(count_seconds(entry.GetTime()), prevout.nValue * -1, input.prevout.hash, input.prevout.n);
-        //     mapAddress.insert(std::make_pair(key, delta));
-        //     inserted.push_back(key);
-        // }
+
+        std::vector<unsigned char> hashBytes;
+        int scriptType = 0;
+
+        if (!ExtractIndexInfo(&prevout.scriptPubKey, scriptType, hashBytes)
+            || scriptType == 0) {
+            continue;
+        }
+
+        CMempoolAddressDeltaKey key(scriptType, uint256(hashBytes.data(), hashBytes.size()), txhash, j, 1);
+        CMempoolAddressDelta delta(count_seconds(entry.GetTime()), prevout.nValue * -1, input.prevout.hash, input.prevout.n);
+        mapAddress.insert(std::make_pair(key, delta));
+        inserted.push_back(key);
     }
 
-    // for (unsigned int k = 0; k < tx.vout.size(); k++) {
-    //     const CTxOut &out = tx.vout[k];
-    //     if (out.scriptPubKey.IsPayToScriptHash()) {
-    //         std::vector<unsigned char> hashBytes(out.scriptPubKey.begin()+2, out.scriptPubKey.begin()+22);
-    //         CMempoolAddressDeltaKey key(2, uint160(hashBytes), txhash, k, 0);
-    //         mapAddress.insert(std::make_pair(key, CMempoolAddressDelta(count_seconds(entry.GetTime()), out.nValue)));
-    //         inserted.push_back(key);
-    //     } else if (out.scriptPubKey.IsPayToPublicKeyHash()) {
-    //         std::vector<unsigned char> hashBytes(out.scriptPubKey.begin()+3, out.scriptPubKey.begin()+23);
-    //         std::pair<addressDeltaMap::iterator,bool> ret;
-    //         CMempoolAddressDeltaKey key(1, uint160(hashBytes), txhash, k, 0);
-    //         mapAddress.insert(std::make_pair(key, CMempoolAddressDelta(count_seconds(entry.GetTime()), out.nValue)));
-    //         inserted.push_back(key);
-    //     } else if (out.scriptPubKey.IsPayToPublicKey()) {
-    //         uint160 hashBytes(Hash160(out.scriptPubKey.begin()+1, out.scriptPubKey.end()-1));
-    //         std::pair<addressDeltaMap::iterator,bool> ret;
-    //         CMempoolAddressDeltaKey key(1, hashBytes, txhash, k, 0);
-    //         mapAddress.insert(std::make_pair(key, CMempoolAddressDelta(count_seconds(entry.GetTime()), out.nValue)));
-    //         inserted.push_back(key);
-    //     }
-    // }
+    for (unsigned int k = 0; k < tx.vout.size(); k++) {
+        const CTxOut &out = tx.vout[k];
+
+        std::vector<unsigned char> hashBytes;
+        int scriptType = 0;
+
+        if (!ExtractIndexInfo(&out.scriptPubKey, scriptType, hashBytes)
+            || scriptType == 0) {
+            continue;
+        }
+
+        CMempoolAddressDeltaKey key(scriptType, uint256(hashBytes.data(), hashBytes.size()), txhash, k, 0);
+        mapAddress.insert(std::make_pair(key, CMempoolAddressDelta(count_seconds(entry.GetTime()), out.nValue)));
+        inserted.push_back(key);
+    }
 
     mapAddressInserted.insert(std::make_pair(txhash, inserted));
 }

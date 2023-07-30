@@ -225,9 +225,9 @@ static RPCHelpMan getaddressbalance()
                     }
                 },
                 RPCExamples{
-            HelpExampleCli("getaddressbalance", "'{\"addresses\": [\"Pb7FLL3DyaAVP2eGfRiEkj4U8ZJ3RHLY9g\"]}'") +
+            HelpExampleCli("getaddressbalance", "Pb7FLL3DyaAVP2eGfRiEkj4U8ZJ3RHLY9g") +
             "\nAs a JSON-RPC call\n"
-            + HelpExampleRpc("getaddressbalance", "{\"addresses\": [\"Pb7FLL3DyaAVP2eGfRiEkj4U8ZJ3RHLY9g\"]}")
+            + HelpExampleRpc("getaddressbalance", "Pb7FLL3DyaAVP2eGfRiEkj4U8ZJ3RHLY9g")
                 },
         [&](const RPCHelpMan& self, const JSONRPCRequest& request) -> UniValue
 {
@@ -276,6 +276,78 @@ static RPCHelpMan getaddressbalance()
 },
     };
 }
+
+
+static RPCHelpMan getaddressesbalance()
+{
+    return RPCHelpMan{"getaddressesbalance",
+                "\nReturns the balance for an address(es) (requires addressindex to be enabled).\n",
+                {
+                    {"addresses", RPCArg::Type::ARR, RPCArg::Optional::NO, "A json array with addresses.\n",
+                        {
+                            {"address", RPCArg::Type::STR, RPCArg::Optional::NO, "The base58check encoded address."},
+                        },
+                    RPCArgOptions{.skip_type_check = true}},
+                },
+                RPCResult{
+                    RPCResult::Type::OBJ, "", "", {
+                        {RPCResult::Type::STR_AMOUNT, "balance", "The current balance in satoshis"},
+                        {RPCResult::Type::STR_AMOUNT, "received", "The total number of satoshis received (including change)"},
+                    }
+                },
+                RPCExamples{
+            HelpExampleCli("getaddressesbalance", "'{\"addresses\": [\"Pb7FLL3DyaAVP2eGfRiEkj4U8ZJ3RHLY9g\"]}'") +
+            "\nAs a JSON-RPC call\n"
+            + HelpExampleRpc("getaddressesbalance", "{\"addresses\": [\"Pb7FLL3DyaAVP2eGfRiEkj4U8ZJ3RHLY9g\"]}")
+                },
+        [&](const RPCHelpMan& self, const JSONRPCRequest& request) -> UniValue
+{
+    std::vector<std::pair<uint256, int> > addresses;
+
+    if (!getAddressesFromParams(request.params, addresses)) {
+        throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "Invalid address 7");
+    }
+
+    std::vector<std::pair<CAddressIndexKey, CAmount> > addressIndex;
+
+    ChainstateManager& chainman = EnsureAnyChainman(request.context);
+
+    for (std::vector<std::pair<uint256, int> >::iterator it = addresses.begin(); it != addresses.end(); it++) {
+        if (!GetAddressIndex(chainman, (*it).first, (*it).second, addressIndex)) {
+            throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "No information available for address");
+        }
+    }
+
+    int nHeight = (unsigned int) chainman.ActiveChain().Height();
+
+    CAmount balance = 0;
+    CAmount balance_spendable = 0;
+    CAmount balance_immature = 0;
+    CAmount received = 0;
+
+    for (std::vector<std::pair<CAddressIndexKey, CAmount> >::const_iterator it=addressIndex.begin(); it!=addressIndex.end(); it++) {
+        if (it->second > 0) {
+            received += it->second;
+        }
+        if (it->first.txindex == 0 && nHeight - it->first.blockHeight < COINBASE_MATURITY) {
+            balance_immature += it->second;
+        } else {
+            balance_spendable += it->second;
+        }
+        balance += it->second;
+    }
+
+    UniValue result(UniValue::VOBJ);
+    result.pushKV("balance", balance);
+    result.pushKV("balance_immature", balance_immature);
+    result.pushKV("balance_spendable", balance_spendable);
+    result.pushKV("received", received);
+
+    return result;
+},
+    };
+}
+
 
 static RPCHelpMan getaddressutxos()
 {
@@ -437,29 +509,28 @@ static RPCHelpMan getaddressdeltas()
 
     ChainstateManager &chainman = EnsureAnyChainman(request.context);
 
-    // UniValue startValue = find_value(request.params[0].get_obj(), "start");
-    // UniValue endValue = find_value(request.params[0].get_obj(), "end");
+    UniValue startValue = find_value(request.params[0].get_obj(), "start");
+    UniValue endValue = find_value(request.params[0].get_obj(), "end");
 
-    // UniValue chainInfo = find_value(request.params[0].get_obj(), "chainInfo");
+    UniValue chainInfo = find_value(request.params[0].get_obj(), "chainInfo");
     bool includeChainInfo = false;
-    // if (chainInfo.isBool()) {
-    //     includeChainInfo = chainInfo.get_bool();
-    // }
+    if (chainInfo.isBool()) {
+        includeChainInfo = chainInfo.get_bool();
+    }
 
     int start = 0;
     int end = 0;
     
-    // ToDo: fix me (?)
-    // if (startValue.isNum() && endValue.isNum()) {
-    //     start = startValue.getInt<int>();
-    //     end = endValue.getInt<int>();
-    //     if (start <= 0 || end <= 0) {
-    //         throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "Start and end is expected to be greater than zero");
-    //     }
-    //     if (end < start) {
-    //         throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "End value is expected to be greater than start");
-    //     }
-    // }
+    if (startValue.isNum() && endValue.isNum()) {
+        start = startValue.getInt<int>();
+        end = endValue.getInt<int>();
+        if (start <= 0 || end <= 0) {
+            throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "Start and end is expected to be greater than zero");
+        }
+        if (end < start) {
+            throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "End value is expected to be greater than start");
+        }
+    }
 
     std::vector<std::pair<uint256, int> > addresses;
     if (!getAddressesFromParams(request.params, addresses)) {
@@ -844,6 +915,7 @@ void RegisterIndexRPCCommands(CRPCTable& t)
 {
     static const CRPCCommand commands[]{
         // Address index
+        {"getaddressesbalance", &getaddressesbalance},
         {"getaddressmempool", &getaddressmempool},
         {"getaddressbalance", &getaddressbalance},
         {"getaddressdeltas",  &getaddressdeltas},
