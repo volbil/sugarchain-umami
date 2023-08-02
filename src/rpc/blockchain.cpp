@@ -46,6 +46,7 @@
 #include <validationinterface.h>
 #include <versionbits.h>
 #include <warnings.h>
+#include <key_io.h>
 
 #include <stdint.h>
 
@@ -2700,6 +2701,8 @@ UniValue CreateUTXOSnapshot(
     result.pushKV("nchaintx", uint64_t{tip->nChainTx});
     return result;
 }
+
+
 
 void RegisterBlockchainRPCCommands(CRPCTable& t)
 {

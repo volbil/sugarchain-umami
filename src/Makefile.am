@@ -118,6 +118,8 @@ endif
 # bitcoin core #
 BITCOIN_CORE_H = \
   addrdb.h \
+  addressindex.h \
+  spentindex.h \
   addrman.h \
   addrman_impl.h \
   attributes.h \
@@ -422,6 +424,7 @@ libbitcoin_node_a_SOURCES = \
   pow.cpp \
   rest.cpp \
   rpc/blockchain.cpp \
+  rpc/index.cpp \
   rpc/fees.cpp \
   rpc/mempool.cpp \
   rpc/mining.cpp \

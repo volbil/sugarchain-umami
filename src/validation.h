@@ -61,6 +61,26 @@ namespace Consensus {
 struct Params;
 } // namespace Consensus
 
+static const bool DEFAULT_ADDRESSINDEX{false};
+static const bool DEFAULT_TIMESTAMPINDEX{false};
+static const bool DEFAULT_SPENTINDEX{false};
+
+// Address index
+extern bool fAddressIndex;
+extern bool fTimestampIndex;
+extern bool fSpentIndex;
+
+enum AddressIndexType {
+    ADDR_INDT_UNKNOWN                = 0,
+    ADDR_INDT_PUBKEY_ADDRESS         = 1,
+    ADDR_INDT_SCRIPT_ADDRESS         = 2,
+    ADDR_INDT_WITNESS_V0_KEYHASH     = 5,
+    ADDR_INDT_WITNESS_V0_SCRIPTHASH  = 6,
+    ADDR_INDT_WITNESS_V1_TAPROOT     = 7
+};
+
+bool ExtractIndexInfo(const CScript *pScript, int &scriptType, std::vector<uint8_t> &hashBytes);
+
 /** Maximum number of dedicated script-checking threads allowed */
 static const int MAX_SCRIPTCHECK_THREADS = 15;
 /** -par default (number of script-checking threads, 0 = auto) */
@@ -330,6 +350,16 @@ public:
 
     ScriptError GetScriptError() const { return error; }
 };
+
+
+// bool GetTimestampIndex(const unsigned int &high, const unsigned int &low, std::vector<uint256> &hashes);
+// bool GetSpentIndex(CTxMemPool& mempool, CSpentIndexKey &key, CSpentIndexValue &value);
+// bool GetAddressIndex(uint160 addressHash, int type,
+//                      std::vector<std::pair<CAddressIndexKey, CAmount> > &addressIndex,
+//                      int start = 0, int end = 0);
+// bool GetAddressUnspent(uint160 addressHash, int type,
+//                        std::vector<std::pair<CAddressUnspentKey, CAddressUnspentValue> > &unspentOutputs);
+
 
 /** Initializes the script-execution cache */
 [[nodiscard]] bool InitScriptExecutionCache(size_t max_size_bytes);

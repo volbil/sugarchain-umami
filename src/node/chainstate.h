@@ -23,6 +23,9 @@ struct ChainstateLoadOptions {
     bool block_tree_db_in_memory{false};
     bool coins_db_in_memory{false};
     bool reindex{false};
+    bool addressindex{false};
+    bool timestampindex{false};
+    bool spentindex{false};
     bool reindex_chainstate{false};
     bool prune{false};
     //! Setting require_full_verification to true will require all checks at

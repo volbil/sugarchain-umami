@@ -423,6 +423,10 @@ void SetupServerArgs(ArgsManager& argsman)
         "-choosedatadir", "-lang=<lang>", "-min", "-resetguisettings", "-splash", "-uiplatform"};
 
     argsman.AddArg("-version", "Print version and exit", ArgsManager::ALLOW_ANY, OptionsCategory::OPTIONS);
+
+    argsman.AddArg("-addressindex", strprintf("Maintain a full address index, used to query for the balance, txids and unspent outputs for addresses (default: %u)", DEFAULT_ADDRESSINDEX), ArgsManager::ALLOW_ANY, OptionsCategory::OPTIONS);
+    argsman.AddArg("-spentindex", strprintf("Maintain a full spent index, used to query the spending txid and input index for an outpoint (default: %u)", DEFAULT_SPENTINDEX), ArgsManager::ALLOW_ANY, OptionsCategory::OPTIONS);
+    argsman.AddArg("-timestampindex", strprintf("Maintain a timestamp index for block hashes, used to query blocks hashes by a range of timestamps (default: %u)", DEFAULT_TIMESTAMPINDEX), ArgsManager::ALLOW_ANY, OptionsCategory::OPTIONS);
 #if HAVE_SYSTEM
     argsman.AddArg("-alertnotify=<cmd>", "Execute command when an alert is raised (%s in cmd is replaced by message)", ArgsManager::ALLOW_ANY, OptionsCategory::OPTIONS);
 #endif
@@ -901,6 +905,18 @@ bool AppInitParameterInteraction(const ArgsManager& args, bool use_syscall_sandb
         if (args.GetBoolArg("-reindex-chainstate", false)) {
             return InitError(_("Prune mode is incompatible with -reindex-chainstate. Use full -reindex instead."));
         }
+    }
+
+    // Make sure additional indexes are recalculated correctly in VerifyDB
+    // (we must reconnect blocks whenever we disconnect them for these indexes to work)
+    bool fAdditionalIndexes =
+        args.GetBoolArg("-addressindex", DEFAULT_ADDRESSINDEX) ||
+        args.GetBoolArg("-spentindex", DEFAULT_SPENTINDEX) ||
+        args.GetBoolArg("-timestampindex", DEFAULT_TIMESTAMPINDEX);
+
+    if (fAdditionalIndexes && args.GetIntArg("-checklevel", DEFAULT_CHECKLEVEL) < 4) {
+        gArgs.ForceSetArg("-checklevel", "4");
+        LogPrintf("%s: parameter interaction: additional indexes -> setting -checklevel=4\n", __func__);
     }
 
     // If -forcednsseed is set to true, ensure -dnsseed has not been set to false
@@ -1493,6 +1509,10 @@ bool AppInitMain(NodeContext& node, interfaces::BlockAndHeaderTipInfo* tip_info)
                 _("Error reading from database, shutting down."),
                 "", CClientUIInterface::MSG_ERROR);
         };
+
+        options.addressindex = args.GetBoolArg("-addressindex", DEFAULT_ADDRESSINDEX);
+        options.spentindex = args.GetBoolArg("-spentindex", DEFAULT_SPENTINDEX);
+        options.timestampindex = args.GetBoolArg("-timestampindex", DEFAULT_TIMESTAMPINDEX);
 
         uiInterface.InitMessage(_("Loading block index…").translated);
         const auto load_block_index_start_time{SteadyClock::now()};
