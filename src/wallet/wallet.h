@@ -1,10 +1,10 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
-// Copyright (c) 2009-2022 The Bitcoin Core developers
+// Copyright (c) 2009-2022 The Sugarchain Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef BITCOIN_WALLET_WALLET_H
-#define BITCOIN_WALLET_WALLET_H
+#ifndef SUGARCHAIN_WALLET_WALLET_H
+#define SUGARCHAIN_WALLET_WALLET_H
 
 #include <consensus/amount.h>
 #include <interfaces/chain.h>
@@ -78,7 +78,7 @@ std::unique_ptr<WalletDatabase> MakeWalletDatabase(const std::string& name, cons
 //! -paytxfee default
 constexpr CAmount DEFAULT_PAY_TX_FEE = 0;
 //! -fallbackfee default
-static const CAmount DEFAULT_FALLBACK_FEE = 20000; // Sugarchain Settings // See https://github.com/bitcoin/bitcoin/pull/16524
+static const CAmount DEFAULT_FALLBACK_FEE = 20000; // Sugarchain Settings // See https://github.com/sugarchain/sugarchain/pull/16524
 //! -discardfee default
 static const CAmount DEFAULT_DISCARD_FEE = 10000;
 //! -mintxfee default
@@ -1051,4 +1051,4 @@ struct MigrationResult {
 util::Result<MigrationResult> MigrateLegacyToDescriptor(const std::string& wallet_name, const SecureString& passphrase, WalletContext& context);
 } // namespace wallet
 
-#endif // BITCOIN_WALLET_WALLET_H
+#endif // SUGARCHAIN_WALLET_WALLET_H

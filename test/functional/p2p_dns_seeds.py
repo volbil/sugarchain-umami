@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# Copyright (c) 2021 The Bitcoin Core developers
+# Copyright (c) 2021 The Sugarchain Core developers
 # Distributed under the MIT software license, see the accompanying
 # file COPYING or http://www.opensource.org/licenses/mit-license.php.
 """Test ThreadDNSAddressSeed logic for querying DNS seeds."""
@@ -7,10 +7,10 @@
 import itertools
 
 from test_framework.p2p import P2PInterface
-from test_framework.test_framework import BitcoinTestFramework
+from test_framework.test_framework import SugarchainTestFramework
 
 
-class P2PDNSSeeds(BitcoinTestFramework):
+class P2PDNSSeeds(SugarchainTestFramework):
     def set_test_params(self):
         self.setup_clean_chain = True
         self.num_nodes = 1
@@ -62,7 +62,7 @@ class P2PDNSSeeds(BitcoinTestFramework):
             extra_args=["-forcednsseed=1", f"-connect={fakeaddr}"],
         )
 
-        # Restore default bitcoind settings
+        # Restore default sugarchaind settings
         self.restart_node(0)
 
     def existing_outbound_connections_test(self):
@@ -119,7 +119,7 @@ class P2PDNSSeeds(BitcoinTestFramework):
         with self.nodes[0].assert_debug_log(
             expected_msgs=["Loading addresses from DNS seed"], timeout=12
         ):
-            # -dnsseed defaults to 1 in bitcoind, but 0 in the test framework,
+            # -dnsseed defaults to 1 in sugarchaind, but 0 in the test framework,
             # so pass it explicitly here
             self.restart_node(0, ["-forcednsseed", "-dnsseed=1"])
 

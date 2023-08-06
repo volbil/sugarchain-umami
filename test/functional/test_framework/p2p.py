@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 # Copyright (c) 2010 ArtForz -- public domain half-a-node
 # Copyright (c) 2012 Jeff Garzik
-# Copyright (c) 2010-2022 The Bitcoin Core developers
+# Copyright (c) 2010-2022 The Sugarchain Core developers
 # Distributed under the MIT software license, see the accompanying
 # file COPYING or http://www.opensource.org/licenses/mit-license.php.
-"""Test objects for interacting with a bitcoind node over the p2p protocol.
+"""Test objects for interacting with a sugarchaind node over the p2p protocol.
 
-The P2PInterface objects interact with the bitcoind nodes under test using the
+The P2PInterface objects interact with the sugarchaind nodes under test using the
 node's p2p interface. They can be used to send messages to the node, and
 callbacks can be registered that execute when messages are received from the
 node. Messages are sent to/received from the node on an asyncio event loop.
@@ -138,7 +138,7 @@ MAGIC_BYTES = {
     "mainnet": b"\x9f\xeb\x4b\x9d",  # mainnet
     "testnet5": b"\xb0\x11\x90\x70",  # testnet3
     "regtest": b"\xaf\xfb\x5b\xad",  # regtest
-    "signet": b"\x0a\x03\xcf\x40",  # signet # Sugarchain: Settings Part 1 # See https://en.bitcoin.it/wiki/Signet
+    "signet": b"\x0a\x03\xcf\x40",  # signet # Sugarchain: Settings Part 1 # See https://en.sugarchain.it/wiki/Signet
 }
 
 
@@ -179,7 +179,7 @@ class P2PConnection(asyncio.Protocol):
 
         loop = NetworkThread.network_event_loop
         logger.debug(
-            "Connecting to Bitcoin Node: %s:%d" % (self.dstaddr, self.dstport)
+            "Connecting to Sugarchain Node: %s:%d" % (self.dstaddr, self.dstport)
         )
         coroutine = loop.create_connection(
             lambda: self, host=self.dstaddr, port=self.dstport
@@ -192,7 +192,7 @@ class P2PConnection(asyncio.Protocol):
         self.peer_connect_helper("0", 0, net, timeout_factor)
 
         logger.debug(
-            "Listening for Bitcoin Node with id: {}".format(connect_id)
+            "Listening for Sugarchain Node with id: {}".format(connect_id)
         )
         return lambda: NetworkThread.listen(self, connect_cb, idx=connect_id)
 
@@ -346,7 +346,7 @@ class P2PConnection(asyncio.Protocol):
 
 
 class P2PInterface(P2PConnection):
-    """A high-level P2P interface class for communicating with a Bitcoin node.
+    """A high-level P2P interface class for communicating with a Sugarchain node.
 
     This class provides high-level callbacks for processing P2P message
     payloads, as well as convenience methods for interacting with the

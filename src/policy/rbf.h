@@ -1,9 +1,9 @@
-// Copyright (c) 2016-2022 The Bitcoin Core developers
+// Copyright (c) 2016-2022 The Sugarchain Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef BITCOIN_POLICY_RBF_H
-#define BITCOIN_POLICY_RBF_H
+#ifndef SUGARCHAIN_POLICY_RBF_H
+#define SUGARCHAIN_POLICY_RBF_H
 
 #include <consensus/amount.h>
 #include <primitives/transaction.h>
@@ -106,4 +106,4 @@ std::optional<std::string> PaysForRBF(CAmount original_fees,
                                       CFeeRate relay_fee,
                                       const uint256& txid);
 
-#endif // BITCOIN_POLICY_RBF_H
+#endif // SUGARCHAIN_POLICY_RBF_H

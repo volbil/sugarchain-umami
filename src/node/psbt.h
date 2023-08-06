@@ -1,9 +1,9 @@
-// Copyright (c) 2009-2021 The Bitcoin Core developers
+// Copyright (c) 2009-2021 The Sugarchain Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef BITCOIN_NODE_PSBT_H
-#define BITCOIN_NODE_PSBT_H
+#ifndef SUGARCHAIN_NODE_PSBT_H
+#define SUGARCHAIN_NODE_PSBT_H
 
 #include <psbt.h>
 
@@ -55,4 +55,4 @@ struct PSBTAnalysis {
 PSBTAnalysis AnalyzePSBT(PartiallySignedTransaction psbtx);
 } // namespace node
 
-#endif // BITCOIN_NODE_PSBT_H
+#endif // SUGARCHAIN_NODE_PSBT_H

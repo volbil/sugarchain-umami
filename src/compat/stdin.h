@@ -1,9 +1,9 @@
-// Copyright (c) 2018 The Bitcoin Core developers
+// Copyright (c) 2018 The Sugarchain Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef BITCOIN_COMPAT_STDIN_H
-#define BITCOIN_COMPAT_STDIN_H
+#ifndef SUGARCHAIN_COMPAT_STDIN_H
+#define SUGARCHAIN_COMPAT_STDIN_H
 
 struct NoechoInst {
     NoechoInst();
@@ -15,4 +15,4 @@ struct NoechoInst {
 bool StdinTerminal();
 bool StdinReady();
 
-#endif // BITCOIN_COMPAT_STDIN_H
+#endif // SUGARCHAIN_COMPAT_STDIN_H

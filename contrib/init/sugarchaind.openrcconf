@@ -1,0 +1,33 @@
+# /etc/conf.d/sugarchaind: config file for /etc/init.d/sugarchaind
+
+# Config file location
+#SUGARCHAIND_CONFIGFILE="/etc/sugarchain/sugarchain.conf"
+
+# What directory to write pidfile to?  (created and owned by $SUGARCHAIND_USER)
+#SUGARCHAIND_PIDDIR="/var/run/sugarchaind"
+
+# What filename to give the pidfile
+#SUGARCHAIND_PIDFILE="${SUGARCHAIND_PIDDIR}/sugarchaind.pid"
+
+# Where to write sugarchaind data (be mindful that the blockchain is large)
+#SUGARCHAIND_DATADIR="/var/lib/sugarchaind"
+
+# User and group to own sugarchaind process
+#SUGARCHAIND_USER="sugarchain"
+#SUGARCHAIND_GROUP="sugarchain"
+
+# Path to sugarchaind executable
+#SUGARCHAIND_BIN="/usr/bin/sugarchaind"
+
+# Nice value to run sugarchaind under
+#SUGARCHAIND_NICE=0
+
+# Additional options (avoid -conf and -datadir, use flags above)
+#SUGARCHAIND_OPTS=""
+
+# The timeout in seconds OpenRC will wait for sugarchaind to terminate
+# after a SIGTERM has been raised.
+# Note that this will be mapped as argument to start-stop-daemon's
+# '--retry' option, which means you can specify a retry schedule
+# here. For more information see man 8 start-stop-daemon.
+SUGARCHAIND_SIGTERM_TIMEOUT=600

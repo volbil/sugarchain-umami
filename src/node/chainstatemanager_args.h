@@ -1,9 +1,9 @@
-// Copyright (c) 2022 The Bitcoin Core developers
+// Copyright (c) 2022 The Sugarchain Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef BITCOIN_NODE_CHAINSTATEMANAGER_ARGS_H
-#define BITCOIN_NODE_CHAINSTATEMANAGER_ARGS_H
+#ifndef SUGARCHAIN_NODE_CHAINSTATEMANAGER_ARGS_H
+#define SUGARCHAIN_NODE_CHAINSTATEMANAGER_ARGS_H
 
 #include <validation.h>
 
@@ -16,4 +16,4 @@ namespace node {
 std::optional<bilingual_str> ApplyArgsManOptions(const ArgsManager& args, ChainstateManager::Options& opts);
 } // namespace node
 
-#endif // BITCOIN_NODE_CHAINSTATEMANAGER_ARGS_H
+#endif // SUGARCHAIN_NODE_CHAINSTATEMANAGER_ARGS_H

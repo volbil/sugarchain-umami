@@ -1,0 +1,67 @@
+#!/usr/bin/env bash
+#
+#  sugarchaind The sugarchain core server.
+#
+#
+# chkconfig: 345 80 20
+# description: sugarchaind
+# processname: sugarchaind
+#
+
+# Source function library.
+. /etc/init.d/functions
+
+# you can override defaults in /etc/sysconfig/sugarchaind, see below
+if [ -f /etc/sysconfig/sugarchaind ]; then
+        . /etc/sysconfig/sugarchaind
+fi
+
+RETVAL=0
+
+prog=sugarchaind
+# you can override the lockfile via SUGARCHAIND_LOCKFILE in /etc/sysconfig/sugarchaind
+lockfile=${SUGARCHAIND_LOCKFILE-/var/lock/subsys/sugarchaind}
+
+# sugarchaind defaults to /usr/bin/sugarchaind, override with SUGARCHAIND_BIN
+sugarchaind=${SUGARCHAIND_BIN-/usr/bin/sugarchaind}
+
+# sugarchaind opts default to -disablewallet, override with SUGARCHAIND_OPTS
+sugarchaind_opts=${SUGARCHAIND_OPTS--disablewallet}
+
+start() {
+    echo -n $"Starting $prog: "
+    daemon $DAEMONOPTS $sugarchaind $sugarchaind_opts
+    RETVAL=$?
+    echo
+    [ $RETVAL -eq 0 ] && touch $lockfile
+    return $RETVAL
+}
+
+stop() {
+    echo -n $"Stopping $prog: "
+    killproc $prog -t600
+    RETVAL=$?
+    echo
+    [ $RETVAL -eq 0 ] && rm -f $lockfile
+    return $RETVAL
+}
+
+case "$1" in
+    start)
+        start
+        ;;
+    stop)
+        stop
+        ;;
+    status)
+        status $prog
+        ;;
+    restart)
+        stop
+        start
+        ;;
+    *)
+        echo "Usage: service $prog {start|stop|status|restart}"
+        exit 1
+        ;;
+esac

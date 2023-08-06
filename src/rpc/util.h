@@ -1,9 +1,9 @@
-// Copyright (c) 2017-2022 The Bitcoin Core developers
+// Copyright (c) 2017-2022 The Sugarchain Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef BITCOIN_RPC_UTIL_H
-#define BITCOIN_RPC_UTIL_H
+#ifndef SUGARCHAIN_RPC_UTIL_H
+#define SUGARCHAIN_RPC_UTIL_H
 
 #include <node/transaction.h>
 #include <outputtype.h>
@@ -390,4 +390,4 @@ private:
 void PushWarnings(const UniValue& warnings, UniValue& obj);
 void PushWarnings(const std::vector<bilingual_str>& warnings, UniValue& obj);
 
-#endif // BITCOIN_RPC_UTIL_H
+#endif // SUGARCHAIN_RPC_UTIL_H

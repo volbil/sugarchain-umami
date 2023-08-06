@@ -1,10 +1,10 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
-// Copyright (c) 2009-2022 The Bitcoin Core developers
+// Copyright (c) 2009-2022 The Sugarchain Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef BITCOIN_TXMEMPOOL_H
-#define BITCOIN_TXMEMPOOL_H
+#ifndef SUGARCHAIN_TXMEMPOOL_H
+#define SUGARCHAIN_TXMEMPOOL_H
 
 #include <atomic>
 #include <map>
@@ -936,4 +936,4 @@ struct DisconnectedBlockTransactions {
     }
 };
 
-#endif // BITCOIN_TXMEMPOOL_H
+#endif // SUGARCHAIN_TXMEMPOOL_H

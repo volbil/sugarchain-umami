@@ -14,9 +14,9 @@ xxd -r -p ./src/bench/data/block6513497.hex ./src/bench/data/block6513497.raw
 ```
 
 ## nBits `src/bench/rpc_blockchain.cpp`
-- BTC `block413567`
+- SUGAR `block413567`
 ```py
-bitcoin-cli getblockheader "0000000000000000025aff8be8a55df8f89c77296db6198f272d6577325d4069" | grep bits
+sugarchain-cli getblockheader "0000000000000000025aff8be8a55df8f89c77296db6198f272d6577325d4069" | grep bits
 "18058436"
 
 >>> print int("0x18058436", 0)
@@ -39,9 +39,9 @@ sugarchain-cli getblockheader "855f0c66238bc0246c8ca25cf958283fd49b9fb4b217ddeb5
 src/bench/bench_sugarchain
 ```
 Referrence:
-- https://bitcoin.stackexchange.com/questions/37605/raw-block-data-in-hexadecimals
+- https://sugarchain.stackexchange.com/questions/37605/raw-block-data-in-hexadecimals
 - https://blockchain.info/block/0000000000000000025aff8be8a55df8f89c77296db6198f272d6577325d4069?format=hex
 - https://stackoverflow.com/questions/6292645/convert-binary-data-to-hexadecimal-in-a-shell-script/8874643
 - https://stackoverflow.com/questions/7826526/transform-hexadecimal-information-to-binary-using-a-linux-command
 - https://stackoverflow.com/questions/209513/convert-hex-string-to-int-in-python
-- https://github.com/bitcoin/bitcoin/blob/master/doc/benchmarking.md
+- https://github.com/sugarchain/sugarchain/blob/master/doc/benchmarking.md

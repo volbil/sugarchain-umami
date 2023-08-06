@@ -1,5 +1,5 @@
 // Copyright (c) 2010 Satoshi Nakamoto
-// Copyright (c) 2009-2022 The Bitcoin Core developers
+// Copyright (c) 2009-2022 The Sugarchain Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -216,7 +216,7 @@ static RPCHelpMan getaddressbalance()
     return RPCHelpMan{"getaddressbalance",
                 "\nReturns the balance for an address(es) (requires addressindex to be enabled).\n",
                 {
-                    {"address", RPCArg::Type::STR, RPCArg::Optional::NO, "The Bitcoin address "},
+                    {"address", RPCArg::Type::STR, RPCArg::Optional::NO, "The Sugarchain address "},
                 },
                 RPCResult{
                     RPCResult::Type::OBJ, "", "", {

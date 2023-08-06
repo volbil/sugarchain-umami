@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
-# Copyright (c) 2022 The Bitcoin Core developers
+# Copyright (c) 2022 The Sugarchain Core developers
 # Distributed under the MIT software license, see the accompanying
 # file COPYING or http://www.opensource.org/licenses/mit-license.php.
 """Test removing undeleted pruned blk files on startup."""
 
 import os
-from test_framework.test_framework import BitcoinTestFramework
+from test_framework.test_framework import SugarchainTestFramework
 
-class FeatureRemovePrunedFilesOnStartupTest(BitcoinTestFramework):
+class FeatureRemovePrunedFilesOnStartupTest(SugarchainTestFramework):
     def set_test_params(self):
         self.num_nodes = 1
         self.extra_args = [["-fastprune", "-prune=1"]]

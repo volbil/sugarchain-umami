@@ -1,10 +1,10 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
-// Copyright (c) 2009-2022 The Bitcoin Core developers
+// Copyright (c) 2009-2022 The Sugarchain Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef BITCOIN_NET_PROCESSING_H
-#define BITCOIN_NET_PROCESSING_H
+#ifndef SUGARCHAIN_NET_PROCESSING_H
+#define SUGARCHAIN_NET_PROCESSING_H
 
 #include <net.h>
 #include <validationinterface.h>
@@ -92,4 +92,4 @@ public:
     virtual void UpdateLastBlockAnnounceTime(NodeId node, int64_t time_in_seconds) = 0;
 };
 
-#endif // BITCOIN_NET_PROCESSING_H
+#endif // SUGARCHAIN_NET_PROCESSING_H

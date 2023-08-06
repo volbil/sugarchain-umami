@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Copyright (c) 2020-2022 The Bitcoin Core developers
+# Copyright (c) 2020-2022 The Sugarchain Core developers
 # Distributed under the MIT software license, see the accompanying
 # file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -12,7 +12,7 @@ export CI_IMAGE_NAME_TAG=ubuntu:20.04
 export PACKAGES="cmake python3 llvm clang g++-multilib"
 export DEP_OPTS="DEBUG=1 MULTIPROCESS=1"
 export GOAL="install"
-export BITCOIN_CONFIG="--enable-debug CC='clang -m32' CXX='clang++ -m32' \
+export SUGARCHAIN_CONFIG="--enable-debug CC='clang -m32' CXX='clang++ -m32' \
 LDFLAGS='--rtlib=compiler-rt -lgcc_s' CPPFLAGS='-DBOOST_MULTI_INDEX_ENABLE_SAFE_MODE'"
-export TEST_RUNNER_ENV="BITCOIND=bitcoin-node"
+export TEST_RUNNER_ENV="SUGARCHAIND=sugarchain-node"
 export TEST_RUNNER_EXTRA="--nosandbox"

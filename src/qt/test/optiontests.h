@@ -1,9 +1,9 @@
-// Copyright (c) 2019-2022 The Bitcoin Core developers
+// Copyright (c) 2019-2022 The Sugarchain Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef BITCOIN_QT_TEST_OPTIONTESTS_H
-#define BITCOIN_QT_TEST_OPTIONTESTS_H
+#ifndef SUGARCHAIN_QT_TEST_OPTIONTESTS_H
+#define SUGARCHAIN_QT_TEST_OPTIONTESTS_H
 
 #include <qt/optionsmodel.h>
 #include <univalue.h>
@@ -29,4 +29,4 @@ private:
     util::Settings m_previous_settings;
 };
 
-#endif // BITCOIN_QT_TEST_OPTIONTESTS_H
+#endif // SUGARCHAIN_QT_TEST_OPTIONTESTS_H

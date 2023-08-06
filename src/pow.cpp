@@ -1,5 +1,5 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
-// Copyright (c) 2009-2022 The Bitcoin Core developers
+// Copyright (c) 2009-2022 The Sugarchain Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -74,7 +74,7 @@ unsigned int CalculateNextWorkRequired(arith_uint256 bnAvg,
     return bnNew.GetCompact();
 }
 
-/* BTC */
+/* SUGAR */
 /*
 unsigned int GetNextWorkRequired(const CBlockIndex* pindexLast, const CBlockHeader *pblock, const Consensus::Params& params)
 {
@@ -142,7 +142,7 @@ unsigned int CalculateNextWorkRequired(const CBlockIndex* pindexLast, int64_t nF
 // or decrease beyond the permitted limits.
 bool PermittedDifficultyTransition(const Consensus::Params& params, int64_t height, uint32_t old_nbits, uint32_t new_nbits)
 {
-    /* BTC
+    /* SUGAR
     if (params.fPowAllowMinDifficultyBlocks) return true;
 
     if (height % params.DifficultyAdjustmentInterval() == 0) {

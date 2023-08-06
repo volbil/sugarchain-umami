@@ -1,10 +1,10 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
-// Copyright (c) 2009-2022 The Bitcoin Core developers
+// Copyright (c) 2009-2022 The Sugarchain Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef BITCOIN_PRIMITIVES_BLOCK_H
-#define BITCOIN_PRIMITIVES_BLOCK_H
+#ifndef SUGARCHAIN_PRIMITIVES_BLOCK_H
+#define SUGARCHAIN_PRIMITIVES_BLOCK_H
 
 #include <primitives/transaction.h>
 #include <serialize.h>
@@ -73,7 +73,7 @@ public:
 class CBlockHeader : public CBlockHeaderUncached
 {
 public:
-    mutable RecursiveMutex cache_lock; // Do not use CCriticalSection // See https://github.com/bitcoin/bitcoin/pull/17891
+    mutable RecursiveMutex cache_lock; // Do not use CCriticalSection // See https://github.com/sugarchain/sugarchain/pull/17891
     mutable bool cache_init;
     mutable uint256 cache_block_hash, cache_PoW_hash;
 
@@ -178,4 +178,4 @@ struct CBlockLocator
     }
 };
 
-#endif // BITCOIN_PRIMITIVES_BLOCK_H
+#endif // SUGARCHAIN_PRIMITIVES_BLOCK_H

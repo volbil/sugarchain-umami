@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Copyright (c) 2019-2022 The Bitcoin Core developers
+# Copyright (c) 2019-2022 The Sugarchain Core developers
 # Distributed under the MIT software license, see the accompanying
 # file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -11,4 +11,4 @@ export CI_IMAGE_NAME_TAG=ubuntu:23.04  # Version 23.04 will reach EOL in Jan 202
 export PACKAGES="clang-16 llvm-16 libclang-rt-16-dev libc++abi-16-dev libc++-16-dev python3-zmq"
 export DEP_OPTS="CC=clang-16 CXX='clang++-16 -stdlib=libc++'"
 export GOAL="install"
-export BITCOIN_CONFIG="--enable-zmq CPPFLAGS='-DARENA_DEBUG -DDEBUG_LOCKORDER -DDEBUG_LOCKCONTENTION' CXXFLAGS='-g' --with-sanitizers=thread"
+export SUGARCHAIN_CONFIG="--enable-zmq CPPFLAGS='-DARENA_DEBUG -DDEBUG_LOCKORDER -DDEBUG_LOCKCONTENTION' CXXFLAGS='-g' --with-sanitizers=thread"

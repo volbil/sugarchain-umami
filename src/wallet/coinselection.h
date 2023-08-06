@@ -1,9 +1,9 @@
-// Copyright (c) 2017-2022 The Bitcoin Core developers
+// Copyright (c) 2017-2022 The Sugarchain Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef BITCOIN_WALLET_COINSELECTION_H
-#define BITCOIN_WALLET_COINSELECTION_H
+#ifndef SUGARCHAIN_WALLET_COINSELECTION_H
+#define SUGARCHAIN_WALLET_COINSELECTION_H
 
 #include <consensus/amount.h>
 #include <consensus/consensus.h>
@@ -424,4 +424,4 @@ std::optional<SelectionResult> KnapsackSolver(std::vector<OutputGroup>& groups, 
                                               CAmount change_target, FastRandomContext& rng);
 } // namespace wallet
 
-#endif // BITCOIN_WALLET_COINSELECTION_H
+#endif // SUGARCHAIN_WALLET_COINSELECTION_H

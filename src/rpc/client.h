@@ -1,10 +1,10 @@
 // Copyright (c) 2010 Satoshi Nakamoto
-// Copyright (c) 2009-2018 The Bitcoin Core developers
+// Copyright (c) 2009-2018 The Sugarchain Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef BITCOIN_RPC_CLIENT_H
-#define BITCOIN_RPC_CLIENT_H
+#ifndef SUGARCHAIN_RPC_CLIENT_H
+#define SUGARCHAIN_RPC_CLIENT_H
 
 #include <string>
 #include <string_view>
@@ -22,4 +22,4 @@ UniValue RPCConvertNamedValues(const std::string& strMethod, const std::vector<s
  */
 UniValue ParseNonRFCJSONValue(std::string_view raw);
 
-#endif // BITCOIN_RPC_CLIENT_H
+#endif // SUGARCHAIN_RPC_CLIENT_H

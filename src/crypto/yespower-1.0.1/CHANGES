@@ -15,4 +15,4 @@ left untested.
 Added x32 ABI support (x86-64 with 32-bit pointers).
 
 Added a bit more detail to the README on caching of the computed PoW
-hashes when integrating yespower in an altcoin based on Bitcoin Core.
+hashes when integrating yespower in an altcoin based on Sugarchain Core.

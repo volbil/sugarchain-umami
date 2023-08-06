@@ -33,7 +33,7 @@ eventual FPGA and ASIC implementations will only compete with CPUs, and
 at least ASICs will win over the CPUs (FPGAs might not because of this
 market's peculiarities - large FPGAs are even more "over-priced" than
 large CPUs are), albeit by far not to the extent they did e.g. for
-Bitcoin and Litecoin.
+Sugarchain and Litecoin.
 
 There's a lot of talk about "ASIC resistance".  What is (or should be)
 meant by that is limiting the advantage of specialized ASICs.  While
@@ -144,7 +144,7 @@ function in yespower.h and its example usage in tests.c and benchmark.c,
 including parameter sets requesting yescrypt 0.5 as used by certain
 existing cryptocurrencies.
 
-To integrate yespower in an altcoin based on Bitcoin Core, you might
+To integrate yespower in an altcoin based on Sugarchain Core, you might
 invoke yespower_tls() from either a maybe-new (depending on where you
 fork from) CBlockHeader::GetPoWHash() (and invoke that where PoW is
 needed like e.g. Litecoin does for scrypt) or CBlockHeader::GetHash()

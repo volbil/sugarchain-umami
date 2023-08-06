@@ -1,9 +1,9 @@
-// Copyright (c) 2021-2022 The Bitcoin Core developers
+// Copyright (c) 2021-2022 The Sugarchain Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef BITCOIN_ADDRMAN_IMPL_H
-#define BITCOIN_ADDRMAN_IMPL_H
+#ifndef SUGARCHAIN_ADDRMAN_IMPL_H
+#define SUGARCHAIN_ADDRMAN_IMPL_H
 
 #include <logging.h>
 #include <logging/timer.h>
@@ -276,4 +276,4 @@ private:
     int CheckAddrman() const EXCLUSIVE_LOCKS_REQUIRED(cs);
 };
 
-#endif // BITCOIN_ADDRMAN_IMPL_H
+#endif // SUGARCHAIN_ADDRMAN_IMPL_H

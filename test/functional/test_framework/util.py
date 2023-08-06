@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# Copyright (c) 2014-2022 The Bitcoin Core developers
+# Copyright (c) 2014-2022 The Sugarchain Core developers
 # Distributed under the MIT software license, see the accompanying
 # file COPYING or http://www.opensource.org/licenses/mit-license.php.
 """Helpful routines for regression testing."""
@@ -43,20 +43,20 @@ def assert_approx(v, vexp, vspan=0.00001):
         )
 
 
-def assert_fee_amount(fee, tx_size, feerate_BTC_kvB):
+def assert_fee_amount(fee, tx_size, feerate_SUGAR_kvB):
     """Assert the fee is in range."""
     assert isinstance(tx_size, int)
-    target_fee = get_fee(tx_size, feerate_BTC_kvB)
+    target_fee = get_fee(tx_size, feerate_SUGAR_kvB)
     if fee < target_fee:
         raise AssertionError(
-            "Fee of %s BTC too low! (Should be %s BTC)"
+            "Fee of %s SUGAR too low! (Should be %s SUGAR)"
             % (str(fee), str(target_fee))
         )
     # allow the wallet's estimation to be at most 2 bytes off
-    high_fee = get_fee(tx_size + 2, feerate_BTC_kvB)
+    high_fee = get_fee(tx_size + 2, feerate_SUGAR_kvB)
     if fee > high_fee:
         raise AssertionError(
-            "Fee of %s BTC too high! (Should be %s BTC)"
+            "Fee of %s SUGAR too high! (Should be %s SUGAR)"
             % (str(fee), str(target_fee))
         )
 
@@ -237,7 +237,7 @@ def assert_array_result(
 
 
 def check_json_precision():
-    """Make sure json library being used does not lose precision converting BTC values"""
+    """Make sure json library being used does not lose precision converting SUGAR values"""
     n = Decimal("20000000.00000003")
     satoshis = int(json.loads(json.dumps(float(n))) * 1.0e8)
     if satoshis != 2000000000000003:
@@ -269,15 +269,15 @@ def ceildiv(a, b):
     return -(-a // b)
 
 
-def get_fee(tx_size, feerate_btc_kvb):
-    """Calculate the fee in BTC given a feerate is BTC/kvB. Reflects CFeeRate::GetFee"""
+def get_fee(tx_size, feerate_sugar_kvb):
+    """Calculate the fee in SUGAR given a feerate is SUGAR/kvB. Reflects CFeeRate::GetFee"""
     feerate_sat_kvb = int(
-        feerate_btc_kvb * Decimal(1e8)
+        feerate_sugar_kvb * Decimal(1e8)
     )  # Fee in sat/kvb as an int to avoid float precision errors
     target_fee_sat = ceildiv(
         feerate_sat_kvb * tx_size, 1000
     )  # Round calculated fee up to nearest sat
-    return target_fee_sat / Decimal(1e8)  # Return result in  BTC
+    return target_fee_sat / Decimal(1e8)  # Return result in  SUGAR
 
 
 def satoshi_round(amount):
@@ -296,7 +296,7 @@ def wait_until_helper(
 
     Warning: Note that this method is not recommended to be used in tests as it is
     not aware of the context of the test framework. Using the `wait_until()` members
-    from `BitcoinTestFramework` or `P2PInterface` class ensures the timeout is
+    from `SugarchainTestFramework` or `P2PInterface` class ensures the timeout is
     properly scaled. Furthermore, `wait_until()` from `P2PInterface` class in
     `p2p.py` has a preset lock.
     """
@@ -434,7 +434,7 @@ def initialize_datadir(dirname, n, chain, disable_autoconnect=True):
     if not os.path.isdir(datadir):
         os.makedirs(datadir)
     write_config(
-        os.path.join(datadir, "bitcoin.conf"),
+        os.path.join(datadir, "sugarchain.conf"),
         n=n,
         chain=chain,
         disable_autoconnect=disable_autoconnect,
@@ -492,7 +492,7 @@ def get_datadir_path(dirname, n):
 
 
 def append_config(datadir, options):
-    with open(os.path.join(datadir, "bitcoin.conf"), "a", encoding="utf8") as f:
+    with open(os.path.join(datadir, "sugarchain.conf"), "a", encoding="utf8") as f:
         for option in options:
             f.write(option + "\n")
 
@@ -500,9 +500,9 @@ def append_config(datadir, options):
 def get_auth_cookie(datadir, chain):
     user = None
     password = None
-    if os.path.isfile(os.path.join(datadir, "bitcoin.conf")):
+    if os.path.isfile(os.path.join(datadir, "sugarchain.conf")):
         with open(
-            os.path.join(datadir, "bitcoin.conf"), "r", encoding="utf8"
+            os.path.join(datadir, "sugarchain.conf"), "r", encoding="utf8"
         ) as f:
             for line in f:
                 if line.startswith("rpcuser="):
